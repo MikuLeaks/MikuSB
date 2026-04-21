@@ -21,6 +21,8 @@ public class CharacterInfo
     public int Trust { get; set; }
     public uint WeaponUniqueId { get; set; }
     public uint SkinId { get; set; }
+    public uint Flag { get; set; }
+    public uint Expiration { get; set; }
     [SugarColumn(IsJson = true)] public List<uint> UnlockedSkin { get; set; } = [];
     [SugarColumn(IsJson = true)] public List<uint> Spines { get; set; } = [];
     [SugarColumn(IsJson = true)] public List<uint> Affixs { get; set; } = [];
@@ -34,17 +36,29 @@ public class CharacterInfo
             Id = Guid,
             Template = TemplateId,
             Count = Count,
+            Flag = Flag,
+            Expiration = Expiration,
             Enhance = new Enhance
             {
                 Level = Level,
-                Break = Break
+                Exp = ToUInt32(Exp),
+                Break = Break,
+                Evolue = ToUInt32(Evolue),
+                Trust = ToUInt32(Trust)
             }
         };
+        proto.Enhance.Spines.AddRange(Spines.Select(x => (ulong)x));
+        proto.Enhance.Affixs.AddRange(Affixs);
 
         proto.Slots[4] = WeaponUniqueId;
         proto.Slots[5] = SkinId;
 
         return proto;
+    }
+
+    private static uint ToUInt32(int value)
+    {
+        return value > 0 ? (uint)value : 0;
     }
 
 }
