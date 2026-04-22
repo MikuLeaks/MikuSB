@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package core;
+package Core;
 
 option csharp_namespace = "MikuSB.Proto";
 

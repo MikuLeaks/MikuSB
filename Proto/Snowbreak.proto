@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package snowbreak;
 
-import "core.proto";
+import "Core.proto";
 
 option csharp_namespace = "MikuSB.Proto";
 
@@ -145,12 +145,12 @@ enum PF {
 message ReqLogin {
 	string provider = 1;
 	string token = 2;
-	core.ClientProfile client_profile = 3;
+	Core.ClientProfile client_profile = 3;
 }
 
 message RspLogin {
 	string session_id = 1;
-	core.Player data = 2;
+	Core.Player data = 2;
 	bool need_rename = 3;
 	uint32 area_id = 4;
 	int32 time_zone = 5;
@@ -172,7 +172,7 @@ message ReqReconnect {
 
 message RspReconnect {
 	string session_id = 1;
-	core.Player data = 2;
+	Core.Player data = 2;
 	bool need_rename = 3;
 	int32 time_zone = 4;
 	uint32 timestamp = 5;
@@ -268,7 +268,7 @@ message NtfBroadcast {
 	uint32 start_time = 3;
 	uint32 end_time = 4;
 	bool clean = 5;
-	repeated core.ChannelOpt channels = 6;
+	repeated Core.ChannelOpt channels = 6;
 }
 
 message NtfSyncPlayer {
@@ -276,17 +276,17 @@ message NtfSyncPlayer {
 	map<uint32, uint32> core = 2;
 	map<uint32, uint32> custom = 3;
 	map<uint32, string> custom_str = 4;
-	repeated core.Item items = 5;
+	repeated Core.Item items = 5;
 	repeated uint64 show_items = 6;
 	repeated uint32 show_attrs = 7;
 	map<string, int32> money = 8;
-	repeated core.FriendPieces pieces = 9;
+	repeated Core.FriendPieces pieces = 9;
 	repeated uint64 badges = 10;
 	repeated uint64 tags = 11;
 }
 
 message NtfSyncLineup {
-	core.Lineup lineup = 1;
+	Core.Lineup lineup = 1;
 	bool remove = 2;
 }
 
@@ -316,7 +316,7 @@ message NtfOnlineStart {
 message NtfOnlineRoom {
 	uint64 room_id = 1;
 	uint32 onlineid = 2;
-	repeated core.OnlinePlayer players = 3;
+	repeated Core.OnlinePlayer players = 3;
 	bool bmatch = 4;
 	repeated uint32 buffinfo = 5;
 }
@@ -334,7 +334,7 @@ message NtfOnlineInvite {
 message NtfOnlineRecruit {
 	uint64 room_id = 1;
 	uint32 online_id = 2;
-	core.PlayerProfile sender_profile = 3;
+	Core.PlayerProfile sender_profile = 3;
 }
 
 message NtfOnlineState {
@@ -354,7 +354,7 @@ message ReqRoomStart {
 }
 
 message RspRoomStart {
-	repeated core.OnlinePlayer players = 1;
+	repeated Core.OnlinePlayer players = 1;
 	repeated uint32 buffinfo = 2;
 	uint32 pollingweek = 3;
 }
@@ -366,7 +366,7 @@ message NtfStopRoom {
 
 message NtfRoomOver {
 	uint64 room_id = 1;
-	repeated core.OnlineEndData playerinfo = 2;
+	repeated Core.OnlineEndData playerinfo = 2;
 }
 
 message ReqAntiData {
