@@ -14,6 +14,7 @@ public class PlayerGameData : BaseDatabaseDataHelper
     public long RegisterTime { get; set; } = Extensions.GetUnixSec();
     public long LastActiveTime { get; set; }
     public Sex Gender { get; set; } = Sex.Female;
+    public uint Vigor {  get; set; } = 240;
     [SugarColumn(IsJson = true)] public List<PlayerAttr> Attrs { get; set; } = [];
     [SugarColumn(IsJson = true)] public List<ulong> ShowItems { get; set; } = [];
 

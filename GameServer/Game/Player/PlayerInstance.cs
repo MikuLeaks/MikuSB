@@ -6,7 +6,7 @@ using MikuSB.Enums.Item;
 using MikuSB.GameServer.Game.Character;
 using MikuSB.GameServer.Game.Inventory;
 using MikuSB.GameServer.Server;
-using MikuSB.Proto;
+using MikuSB.GameServer.Game.Lineup;
 using MikuSB.TcpSharp;
 using MikuSB.Util.Extensions;
 
@@ -29,6 +29,7 @@ public class PlayerInstance(PlayerGameData data)
     public PlayerGameData Data { get; set; } = data;
     public CharacterManager CharacterManager { get; set; } = null!;
     public InventoryManager InventoryManager { get; set; } = null!;
+    public LineupManager LineupManager { get; set; } = null!;
 
     #endregion
 
@@ -64,6 +65,14 @@ public class PlayerInstance(PlayerGameData data)
             {
                 await CharacterManager.AddCharacter((ItemTypeEnum)card.Genre, card.Detail, card.Particular, card.Level);
             }
+
+            var selected = CharacterManager.CharacterData.Characters
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(3)
+                .Select(x => x.Guid)
+                .ToList();
+
+            await LineupManager.UpdateLineup(1, selected[0], selected[1], selected[2]);
 
             var bootstrapAttrs = BuildLobbyBootstrapAttrs();
             var existingAttrs = Data.Attrs
@@ -103,6 +112,7 @@ public class PlayerInstance(PlayerGameData data)
         Uid = Data.Uid;
         Data.LastActiveTime = Extensions.GetUnixSec();
         InventoryManager = new InventoryManager(this);
+        LineupManager = new LineupManager(this);
         CharacterManager = new CharacterManager(this);
 
         await Task.CompletedTask;
@@ -162,18 +172,8 @@ public class PlayerInstance(PlayerGameData data)
             Name = Data.Name,
             Level = Data.Level,
             Sex = Data.Gender,
-            Vigor = 240,
-            Solutions =
-            {
-                new Lineup // TODO Lineup Manager
-                {
-                    Index = 1,
-                    Name = "Default",
-                    Member1 = 1,
-                    Member2 = 2,
-                    Member3 = 3
-                }
-            },
+            Vigor = Data.Vigor,
+            Solutions = { LineupManager.LineupData.LineupInfo.Values.Select(x => x.ToProto()) },
         };
 
         foreach (var item in InventoryManager.InventoryData.Items.Values) proto.Items.Add(item.ToProto());
