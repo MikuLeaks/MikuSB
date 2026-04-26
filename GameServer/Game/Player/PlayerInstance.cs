@@ -52,6 +52,14 @@ public class PlayerInstance(PlayerGameData data)
             {
                 await InventoryManager.AddWeaponItem((ItemTypeEnum)weapon.Genre, weapon.Detail, weapon.Particular, weapon.Level);
             }
+            foreach (var ar in GameData.ArItemData.Values)
+            {
+                await InventoryManager.AddArItem((ItemTypeEnum)ar.Genre, ar.Detail, ar.Particular, ar.Level);
+            }
+            foreach (var manifest in GameData.ManifestationData.Values)
+            {
+                await InventoryManager.AddManifestationItem((ItemTypeEnum)manifest.Genre, manifest.Detail, manifest.Particular, manifest.Level);
+            }
             foreach (var card in GameData.CardData.Values)
             {
                 await CharacterManager.AddCharacter((ItemTypeEnum)card.Genre, card.Detail, card.Particular, card.Level);
@@ -168,6 +176,7 @@ public class PlayerInstance(PlayerGameData data)
             },
         };
 
+        foreach (var item in InventoryManager.InventoryData.Items.Values) proto.Items.Add(item.ToProto());
         foreach (var weapon in InventoryManager.InventoryData.Weapons.Values) proto.Items.Add(weapon.ToProto());
         foreach (var skin in InventoryManager.InventoryData.Skins.Values) proto.Items.Add(skin.ToProto());
         foreach (var chara in CharacterManager.CharacterData.Characters) proto.Items.Add(chara.ToProto());

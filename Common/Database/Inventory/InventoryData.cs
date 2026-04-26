@@ -19,7 +19,7 @@ public class InventoryData : BaseDatabaseDataHelper
     public Dictionary<uint, GameSkinInfo> Skins { get; set; } = [];  // Key: UniqueId
 }
 
-public abstract class BaseGameItemInfo
+public class BaseGameItemInfo
 {
     public uint UniqueId { get; set; }
     public ulong TemplateId { get; set; }
