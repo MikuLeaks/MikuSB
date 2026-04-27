@@ -75,3 +75,20 @@ dotnet build
 * [ ] Multiplayer systems
 * [ ] Base / dorm systems
 * [ ] Full client API coverage
+
+## Contributors
+- [Naruse](https://github.com/DevilProMT)
+- [Kei-Luna](https://github.com/Kei-Luna)
+
+## Notes on use
+This software is intended for research and testing purposes in a local environment.  
+It is not intended for unauthorized access to, interference with, or commercial use of official services.
+
+## Legal Disclaimer
+MikuSB was developed for educational and research purposes.  
+- This project is not affiliated with or endorsed by SEASUN GAMES PTE. LTD.  
+- All trademarks, copyrights, and other intellectual property related to the original game and its associated franchise belong to their respective owners.  
+- This repository does not include any copyrighted game assets, binaries, or master data.  
+- Use this software at your own risk. The authors assume no responsibility for any damages or legal consequences resulting from its use.  
+
+If you are a rights holder and have any concerns regarding this software, please contact `devilpromt` or `kei_luna` on Discord.
