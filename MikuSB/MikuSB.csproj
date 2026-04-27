@@ -18,4 +18,45 @@
     <ProjectReference Include="..\SdkServer\SdkServer.csproj" />
   </ItemGroup>
 
+  <Target Name="BuildBundledUpdater" BeforeTargets="Build">
+    <MSBuild
+      Projects="..\MikuSB.Updater\MikuSB.Updater.csproj"
+      Targets="Build"
+      Properties="Configuration=$(Configuration);TargetFramework=$(TargetFramework)" />
+  </Target>
+
+  <Target Name="CopyUpdaterAfterBuild" AfterTargets="Build">
+    <ItemGroup>
+      <_UpdaterBuildArtifacts Include="..\MikuSB.Updater\bin\$(Configuration)\$(TargetFramework)\MikuSB.Updater.exe" />
+      <_UpdaterBuildArtifacts Include="..\MikuSB.Updater\bin\$(Configuration)\$(TargetFramework)\MikuSB.Updater.dll" />
+      <_UpdaterBuildArtifacts Include="..\MikuSB.Updater\bin\$(Configuration)\$(TargetFramework)\MikuSB.Updater.deps.json" />
+      <_UpdaterBuildArtifacts Include="..\MikuSB.Updater\bin\$(Configuration)\$(TargetFramework)\MikuSB.Updater.runtimeconfig.json" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(_UpdaterBuildArtifacts)"
+      DestinationFolder="$(OutDir)"
+      SkipUnchangedFiles="true"
+      Condition="Exists('%(_UpdaterBuildArtifacts.Identity)')" />
+  </Target>
+
+  <Target Name="PublishBundledUpdater" AfterTargets="Publish">
+    <PropertyGroup>
+      <_UpdaterPublishDir>$(PublishDir)updater-publish\</_UpdaterPublishDir>
+    </PropertyGroup>
+
+    <MSBuild
+      Projects="..\MikuSB.Updater\MikuSB.Updater.csproj"
+      Targets="Restore;Publish"
+      RemoveProperties="PublishProfile"
+      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=true;PublishSingleFile=true;PublishDir=$(_UpdaterPublishDir)" />
+
+    <Copy
+      SourceFiles="$(_UpdaterPublishDir)MikuSB.Updater.exe"
+      DestinationFiles="$(PublishDir)MikuSB.Updater.exe"
+      Condition="Exists('$(_UpdaterPublishDir)MikuSB.Updater.exe')" />
+
+    <RemoveDir Directories="$(_UpdaterPublishDir)" Condition="Exists('$(_UpdaterPublishDir)')" />
+  </Target>
+
 </Project>

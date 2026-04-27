@@ -4,6 +4,7 @@ using MikuSB.MikuSB.Tool;
 using MikuSB.GameServer.Command;
 using MikuSB.GameServer.Server;
 using MikuSB.Internationalization;
+using MikuSB.MikuSB.Update;
 using MikuSB.TcpSharp;
 using MikuSB.Util;
 using System.Globalization;
@@ -20,9 +21,12 @@ public class MikuSB
     public static async Task Main()
     {
         var time = DateTime.Now;
-        RegisterExitEvent();
         IConsole.InitConsole();
         LoaderManager.InitConfig();
+        if (await UpdateService.TryStartSelfUpdateAsync())
+            return;
+
+        RegisterExitEvent();
         await LoaderManager.InitSdkServer();
         LoaderManager.InitPacket();
 

@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TcpSharp", "TcpSharp\TcpSha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proxy", "Proxy\Proxy.csproj", "{B3C4D5E6-F7A8-9012-BCDE-F12345678901}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MikuSB.Updater", "MikuSB.Updater\MikuSB.Updater.csproj", "{CE0F3A4B-8C55-4A31-A1B5-A0CB1C7F0A11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{B3C4D5E6-F7A8-9012-BCDE-F12345678901}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3C4D5E6-F7A8-9012-BCDE-F12345678901}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3C4D5E6-F7A8-9012-BCDE-F12345678901}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE0F3A4B-8C55-4A31-A1B5-A0CB1C7F0A11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE0F3A4B-8C55-4A31-A1B5-A0CB1C7F0A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE0F3A4B-8C55-4A31-A1B5-A0CB1C7F0A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE0F3A4B-8C55-4A31-A1B5-A0CB1C7F0A11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

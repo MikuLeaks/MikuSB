@@ -1,0 +1,56 @@
+name: release
+
+on:
+  push:
+    paths:
+      - version.txt
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Read version
+        id: version
+        shell: pwsh
+        run: |
+          $line = (Get-Content version.txt | Select-Object -First 1).Trim()
+          $version = $line -replace '^v=', ''
+          if ([string]::IsNullOrWhiteSpace($version)) { throw 'version.txt is empty.' }
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "tag=v$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Publish server
+        run: dotnet publish .\MikuSB\MikuSB.csproj -c Release -p:PublishProfile=MikuSB-Win64-MultiFile -o .\artifacts\publish\MikuSB
+
+      - name: Assemble release package
+        shell: pwsh
+        run: |
+          $packageDir = ".\artifacts\package\MikuSB-win-x64"
+          New-Item -ItemType Directory -Force -Path $packageDir | Out-Null
+          Copy-Item .\artifacts\publish\MikuSB\* $packageDir -Recurse -Force
+          if (-not (Test-Path "$packageDir\MikuSB.Updater.exe")) { throw 'MikuSB.Updater.exe was not bundled into the publish output.' }
+          Copy-Item .\version.txt $packageDir -Force
+          Compress-Archive -Path "$packageDir\*" -DestinationPath .\artifacts\MikuSB-win-x64.zip -Force
+          $hash = (Get-FileHash .\artifacts\MikuSB-win-x64.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  MikuSB-win-x64.zip" | Set-Content .\artifacts\MikuSB-win-x64.zip.sha256
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+          files: |
+            artifacts/MikuSB-win-x64.zip
+            artifacts/MikuSB-win-x64.zip.sha256

@@ -1,0 +1,21 @@
+<Project>
+  <Target Name="GenerateBuildVersionInfo" BeforeTargets="BeforeCompile">
+    <ReadLinesFromFile File="$(MSBuildThisFileDirectory)version.txt">
+      <Output TaskParameter="Lines" ItemName="_BuildVersionLines" />
+    </ReadLinesFromFile>
+
+    <PropertyGroup>
+      <_BuildVersionRaw>@(_BuildVersionLines->'%(Identity)', '')</_BuildVersionRaw>
+      <_BuildVersion>$([System.String]::Copy('$(_BuildVersionRaw)').Replace('v=', '').Trim())</_BuildVersion>
+    </PropertyGroup>
+
+    <WriteLinesToFile
+      File="$(IntermediateOutputPath)BuildVersion.g.cs"
+      Overwrite="true"
+      Lines="// &lt;auto-generated/&gt;&#x0A;[assembly: System.Reflection.AssemblyInformationalVersionAttribute(&quot;$(_BuildVersion)&quot;)]" />
+
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)BuildVersion.g.cs" Visible="false" />
+    </ItemGroup>
+  </Target>
+</Project>

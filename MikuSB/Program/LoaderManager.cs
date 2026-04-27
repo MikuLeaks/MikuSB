@@ -46,6 +46,7 @@ public class LoaderManager : MikuSB
 
         // Starting the server
         Logger.Info(I18NManager.Translate("Server.ServerInfo.StartingServer"));
+        Logger.Info($"Build version: {BuildVersion.Current}");
 
         // Load the config
         Logger.Info(I18NManager.Translate("Server.ServerInfo.LoadingItem", I18NManager.Translate("Word.Config")));
