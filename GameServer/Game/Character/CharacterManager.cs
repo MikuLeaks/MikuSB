@@ -30,7 +30,7 @@ public class CharacterManager(PlayerInstance player) : BasePlayerManager(player)
         var weaponInfo = await Player.InventoryManager!.AddWeaponItem((ItemTypeEnum)CharacterExcel.DefaultWeaponGPDL[0], CharacterExcel.DefaultWeaponGPDL[1], CharacterExcel.DefaultWeaponGPDL[2], CharacterExcel.DefaultWeaponGPDL[3],sendPacket:false);
         if (weaponInfo != null) character.WeaponUniqueId = weaponInfo.UniqueId;
 
-        var skinInfo = Player.InventoryManager!.GetNormalItemGDPL(ItemTypeEnum.TYPE_CARD_SKIN, detail, particular, level)
+        var skinInfo = Player.InventoryManager!.GetSkinItemGDPL(ItemTypeEnum.TYPE_CARD_SKIN, detail, particular, level)
               ?? await Player.InventoryManager!.AddSkinItem(ItemTypeEnum.TYPE_CARD_SKIN, detail, particular, level, false);
         if (skinInfo != null) character.SkinId = skinInfo.UniqueId;
 

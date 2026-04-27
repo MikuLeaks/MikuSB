@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using MikuSB.Proto;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
@@ -15,16 +16,35 @@ public class GirlSkin_ChangeSkinType : ICallGSHandler
             ["nType"] = req?.Type ?? 1,
             ["nSkinId"] = req?.SkinId
         };
-        // TODO change type in proto Item ??
-        await CallGSRouter.SendScript(connection, "GirlSkin_ChangeSkinType", response.ToJsonString());
+        if (req == null)
+        {
+            await CallGSRouter.SendScript(connection, "GirlSkin_ChangeSkinType", response.ToJsonString());
+            return;
+        }
+        
+        var player = connection.Player!;
+        var skinData = player.InventoryManager.GetSkinItem(req.SkinId);
+        if (skinData == null)
+        {
+            await CallGSRouter.SendScript(connection, "GirlSkin_ChangeSkinType", response.ToJsonString());
+            return;
+        }
+
+        skinData.SkinType = req.Type;
+        var sync = new NtfSyncPlayer
+        {
+            Items = { skinData.ToProto() }
+        };
+
+        await CallGSRouter.SendScript(connection, "GirlSkin_ChangeSkinType", response.ToJsonString(), sync);
     }
 }
 
 internal sealed class ChangeSkinTypeParam
 {
     [JsonPropertyName("nType")]
-    public int? Type { get; set; }
+    public uint Type { get; set; }
 
     [JsonPropertyName("nSkinId")]
-    public uint? SkinId { get; set; }
+    public uint SkinId { get; set; }
 }

@@ -16,7 +16,7 @@ public class HttpServerConfig
     public string BindAddress { get; set; } = "0.0.0.0";
     public string PublicAddress { get; set; } = "127.0.0.1";
     public int Port { get; set; } = 21500;
-    public bool EnableLog { get; set; } = true;
+    public bool EnableLog { get; set; } = false;
 
     public string GetDisplayAddress()
     {

@@ -69,7 +69,7 @@ public class GameWeaponInfo : GrowableItemInfo
     }
 }public class GameSkinInfo : BaseGameItemInfo
 {
-    public uint Level { get; set; }
+    public uint SkinType { get; set; }
     public override Item ToProto()
     {
         var proto = new Item
@@ -79,6 +79,7 @@ public class GameWeaponInfo : GrowableItemInfo
             Count = ItemCount,
             Flag = (uint)Flag,
         };
+        proto.Slots[11] = SkinType;
         return proto;
     }
 }

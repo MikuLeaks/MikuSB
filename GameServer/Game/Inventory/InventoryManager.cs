@@ -51,25 +51,41 @@ public class InventoryManager(PlayerInstance player) : BasePlayerManager(player)
         return InventoryData.Weapons.Values.FirstOrDefault(x => x.TemplateId == templateId);
     }
 
-    public async ValueTask<BaseGameItemInfo?> AddSkinItem(ItemTypeEnum genre, uint detail, uint particular, uint level = 1, bool sendPacket = true)
+    public async ValueTask<GameSkinInfo?> AddSkinItem(ItemTypeEnum genre, uint detail, uint particular, uint level = 1, bool sendPacket = true)
     {
         if (genre != ItemTypeEnum.TYPE_CARD_SKIN) return null;
         var skinData = GameData.CardSkinData.Values.FirstOrDefault(x => x.Genre == (int)genre && x.Detail == detail && x.Particular == particular && x.Level == level);
         if (skinData == null) return null;
 
         var templateId = GameResourceTemplateId.FromGdpl((uint)genre,detail,particular,level);
-        var skinInfo = new BaseGameItemInfo
+        var skinInfo = new GameSkinInfo
         {
             TemplateId = templateId,
             UniqueId = InventoryData.NextUniqueUid++,
             ItemType = ItemTypeEnum.TYPE_CARD_SKIN,
             ItemCount = 1
         };
-        InventoryData.Items[skinInfo.UniqueId] = skinInfo;
+        InventoryData.Skins[skinInfo.UniqueId] = skinInfo;
 
         if (sendPacket) await Player.SendPacket(new PacketNtfCallScript([skinInfo]));
 
         return skinInfo;
+    }
+
+    public GameSkinInfo? GetSkinItem(uint uniqueId)
+    {
+        return InventoryData.Skins.GetValueOrDefault(uniqueId);
+    }
+
+    public GameSkinInfo? GetSkinItemByTemplateId(ulong templateId)
+    {
+        return InventoryData.Skins.Values.FirstOrDefault(x => x.TemplateId == templateId);
+    }
+
+    public GameSkinInfo? GetSkinItemGDPL(ItemTypeEnum genre, uint detail, uint particular, uint level)
+    {
+        var templateId = GameResourceTemplateId.FromGdpl((uint)genre, detail, particular, level);
+        return InventoryData.Skins.Values.FirstOrDefault(x => x.TemplateId == templateId);
     }
 
     public async ValueTask<BaseGameItemInfo?> AddArItem(ItemTypeEnum genre, uint detail, uint particular, uint level = 1, bool sendPacket = true)
