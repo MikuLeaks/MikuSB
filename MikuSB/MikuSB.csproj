@@ -8,7 +8,7 @@
     <CETCompat>false</CETCompat>
     <RootNamespace>MikuSB.MikuSB</RootNamespace>
     <AssemblyName>MikuSB</AssemblyName>
-    <ApplicationIcon>Source\Kiana.ico</ApplicationIcon>
+    <ApplicationIcon>Source\Snowbreak.ico</ApplicationIcon>
 	<SatelliteResourceLanguages>false</SatelliteResourceLanguages>
   </PropertyGroup>
 
