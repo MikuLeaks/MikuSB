@@ -4,6 +4,8 @@ using MikuSB.Database;
 using MikuSB.Database.Character;
 using MikuSB.Enums.Item;
 using MikuSB.GameServer.Game.Player;
+using MikuSB.GameServer.Server.Packet.Send.Login;
+using MikuSB.Proto;
 using MikuSB.Util.Extensions;
 
 namespace MikuSB.GameServer.Game.Character;
@@ -11,9 +13,9 @@ namespace MikuSB.GameServer.Game.Character;
 public class CharacterManager(PlayerInstance player) : BasePlayerManager(player)
 {
     public CharacterData CharacterData { get; } = DatabaseHelper.GetInstanceOrCreateNew<CharacterData>(player.Uid);
-    public async ValueTask<CardExcel?> AddCharacter(ItemTypeEnum genre, uint detail, uint particular, uint level = 1)
+    public async ValueTask<CharacterInfo?> AddCharacter(ItemTypeEnum genre, uint detail, uint particular, uint level = 1, uint star = 1, bool sendPacket = true)
     {
-        var characterId = GameResourceTemplateId.FromGdpl((uint)genre,detail,particular,level);
+        var characterId = GameResourceTemplateId.FromGdpl((uint)genre,detail,particular,1);
         if (CharacterData.Characters.Any(a => a.TemplateId == characterId)) return null;
         var CharacterExcel = GameData.CardData.Values.FirstOrDefault(x => x.Genre == (int)genre && x.Detail == detail && x.Particular == particular);
         if (CharacterExcel == null) return null;
@@ -23,7 +25,7 @@ public class CharacterManager(PlayerInstance player) : BasePlayerManager(player)
             Guid = CharacterData.NextCharacterGuid++,
             TemplateId = characterId,
             Level = level,
-            Break = CharacterExcel.InitBreak,
+            Break = star,
             Timestamp = Extensions.GetUnixSec(),
             Flag = ItemFlagEnum.FLAG_READED
         };
@@ -31,16 +33,14 @@ public class CharacterManager(PlayerInstance player) : BasePlayerManager(player)
         var weaponInfo = await Player.InventoryManager!.AddWeaponItem((ItemTypeEnum)CharacterExcel.DefaultWeaponGPDL[0], CharacterExcel.DefaultWeaponGPDL[1], CharacterExcel.DefaultWeaponGPDL[2], (uint)CharacterExcel.DefaultWeaponGPDL[3]);
         if (weaponInfo != null) character.WeaponUniqueId = weaponInfo.UniqueId;
 
-        //var skinInfo = await Player.InventoryManager!.AddSkinItem(ItemTypeEnum.TYPE_CARD_SKIN, detail, particular, level);
-        var skinInfo = Player.InventoryManager!.GetSkinItemGDPL(ItemTypeEnum.TYPE_CARD_SKIN, detail, particular, level);
-        if (skinInfo != null)
-        {
-            character.SkinId = skinInfo.UniqueId;
-            character.UnlockedSkin.Add(skinInfo.UniqueId);
-        }
+        var skinInfo = Player.InventoryManager!.GetSkinItemGDPL(ItemTypeEnum.TYPE_CARD_SKIN, detail, particular, level)
+              ?? await Player.InventoryManager!.AddSkinItem(ItemTypeEnum.TYPE_CARD_SKIN, detail, particular, level);
+        if (skinInfo != null) character.SkinId = skinInfo.UniqueId;
+
+        if (sendPacket) await Player.SendPacket(new PacketNtfCallScript([character]));
 
         CharacterData.Characters.Add(character);
-        return CharacterExcel;
+        return character;
     }
 
     public CharacterInfo? GetCharacter(ulong TemplateId)

@@ -68,7 +68,7 @@ public class PlayerInstance(PlayerGameData data)
             }
             foreach (var card in GameData.CardData.Values)
             {
-                await CharacterManager.AddCharacter((ItemTypeEnum)card.Genre, card.Detail, card.Particular, card.Level);
+                await CharacterManager.AddCharacter((ItemTypeEnum)card.Genre, card.Detail, card.Particular, card.Level, sendPacket:false);
             }
             foreach (var supplies in GameData.AllSuppliesData)
             {

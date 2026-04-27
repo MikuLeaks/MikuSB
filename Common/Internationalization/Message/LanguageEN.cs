@@ -81,11 +81,7 @@ public class CommandTextEN
 {
     public NoticeTextEN Notice { get; } = new();
     public HelpTextEN Help { get; } = new();
-    public ValkTextEN Valk { get; } = new();
-    public GiveAllTextEN GiveAll { get; } = new();
-    public ElfTextEN Elf { get; } = new();
-    public AbyssTextEN Abyss { get; } = new();
-    public EndlessTextEN Endless { get; } = new();
+    public GirlTextEN Girl { get; } = new();
 }
 
 #endregion
@@ -180,96 +176,21 @@ public class HelpTextEN
 }
 
 /// <summary>
-///     path: Game.Command.Valk
+///     path: Game.Command.Girl
 /// </summary>
-public class ValkTextEN
+public class GirlTextEN
 {
-    public string Desc => "Set attributes for owned characters\n" +
-                          "Note: -1 means all owned characters\n";
+    public string Desc => "Add characters to player\n" +
+                          "detail and particular can be found in Resources/ExcelOutput/card.json\n\n" +
+                          "Note: -1 means all characters\n";
 
     public string Usage =>
-        "Usage: /valk add [ValkID/-1] l<Level> s<Star>\n\n" +
-        "Usage: /valk level [ValkID/-1] [Level]\n\n" +
-        "Usage: /valk star [ValkID/-1] [Star]\n\n" +
-        "Usage: /valk skill [ValkID/-1] for max skill level";
+        "Usage: /girl add <detail/-1> -p<particular> -l<level> -s<star>\n" +
+        "Usage: /girl level <guid/-1> <level>";
 
-    public string ValkNotFound => "Character does not exist!";
-    public string ValkAddedAll => "Granted all characters to player!";
-    public string ValkAdded => "Granted character {0} to player!";
-    public string ValkSetLevelAll => "Set all characters to level {0}!";
-    public string ValkSetLevel => "Set character {0} to level {1}!";
-    public string ValkSetStarAll => "Set all characters' Resonance to {0}!";
-    public string ValkSetStar => "Set character {0}'s Resonance to {1}!";
-    public string ValkSetSkillLevelAll => "Set all characters' skill levels to max!";
-    public string ValkSetSkillLevel => "Set character {0}'s skill levels to max!";
-}
-
-/// <summary>
-///     path: Game.Command.GiveAll
-/// </summary>
-public class GiveAllTextEN
-{
-    public string Desc => "Give all items of specified type\n" +
-                          "weapon,stigmata";
-
-    public string Usage =>
-        "Usage: /giveall weapon\n\n" +
-        "Usage: /giveall stigmata\n\n" +
-        "Usage: /giveall material\n\n" +
-        "Usage: /giveall dress\n";
-
-    public string GiveAllItems => "Granted all {0}";
-}
-
-/// <summary>
-///     path: Game.Command.Elf
-/// </summary>
-public class ElfTextEN
-{
-    public string Desc => "Set attributes for owned elfs\n" +
-                          "Note: -1 means all owned elfs\n";
-
-    public string Usage =>
-        "Usage: /elf add [ElfID/-1] l<Level> s<Star>\n\n";
-
-    public string ElfNotFound => "Elf does not exist!";
-    public string ElfAddedAll => "Granted all Elfs to player!";
-    public string ElfAdded => "Granted Elf {0} to player!";
-    public string ElfSetLevelAll => "Set all Elfs to level {0}!";
-    public string ElfSetLevel => "Set Elf {0} to level {1}!";
-    public string ElfSetStarAll => "Set all Elf's Resonance to {0}!";
-    public string ElfSetStar => "Set Elf {0}'s Resonance to {1}!";
-}
-
-/// <summary>
-///     path: Game.Command.Abyss
-/// </summary>
-public class AbyssTextEN
-{
-    public string Desc => "Set abyss disturbance,bracket,site \n";
-
-    public string Usage =>
-        "Usage: /abyss bracket [1-9]\n\n" +
-        "Usage: /abyss temp [value]\n\n" + 
-        "Usage: /abyss site [siteId]\n";
-
-    public string Success => "Success set {0}";
-    public string AreaNotFound => "SiteId Not Found";
-}
-
-/// <summary>
-///     path: Game.Command.Endless
-/// </summary>
-public class EndlessTextEN
-{
-    public string Desc => "Set Memorial Arena boss \n";
-
-    public string Usage =>
-        "Usage: /endless [bossid1] [bossid2] [bossid3]\n\n" +
-        "/endless 1001 1002 1003";
-
-    public string Success => "Success set Memorial Arena Boss";
-    public string NotFound => "BossId Not Found";
+    public string NotFound => "Character not found!";
+    public string Added => "Granted {0} character(s) to player!";
+    public string UpdateLevel => "Set {1} character(s) to level {0}!";
 }
 
 #endregion
