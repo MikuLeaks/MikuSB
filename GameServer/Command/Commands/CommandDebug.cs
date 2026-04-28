@@ -5,7 +5,7 @@ using MikuSB.Internationalization;
 
 namespace MikuSB.GameServer.Command.Commands;
 
-[CommandInfo("debug", "Debug packet output", "/debug [on|off|simple|detail|file]", ["dbg"], [PermEnum.Admin, PermEnum.Support])]
+[CommandInfo("debug", "Game.Command.Debug.Desc", "Game.Command.Debug.Usage", ["dbg"], [PermEnum.Admin, PermEnum.Support])]
 public class CommandDebug : ICommands
 {
     private static readonly Logger Logger = new("CommandManager");
@@ -22,7 +22,7 @@ public class CommandDebug : ICommands
             "simple" => EnableSimpleDebug(serverOption),
             "detail" => EnableDetailDebug(serverOption),
             "file" => ToggleDebugFile(serverOption),
-            _ => "Usage: /debug [on|off|simple|detail|file]"
+            _ => I18NManager.Translate("Game.Command.Debug.Usage")
         };
 
         Logger.Info(message);
