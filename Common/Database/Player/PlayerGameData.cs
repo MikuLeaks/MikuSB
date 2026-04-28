@@ -16,6 +16,7 @@ public class PlayerGameData : BaseDatabaseDataHelper
     public Sex Gender { get; set; } = Sex.Female;
     public uint Vigor {  get; set; } = 240;
     [SugarColumn(IsJson = true)] public List<PlayerAttr> Attrs { get; set; } = [];
+    [SugarColumn(IsJson = true)] public List<PlayerStrAttr> StrAttrs { get; set; } = [];
     [SugarColumn(IsJson = true)] public List<ulong> ShowItems { get; set; } = [];
 
     public static PlayerGameData? GetPlayerByUid(long uid)
@@ -45,4 +46,11 @@ public class PlayerAttr
     public uint Gid { get; set; }
     public uint Sid { get; set; }
     public uint Val { get; set; }
+}
+
+public class PlayerStrAttr
+{
+    public uint Gid { get; set; }
+    public uint Sid { get; set; }
+    public string Val { get; set; } = "";
 }

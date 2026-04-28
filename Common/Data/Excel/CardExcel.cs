@@ -19,6 +19,7 @@ public class CardExcel : ExcelResource
     [JsonProperty("profile")] public List<List<int>> Profile { get; set; } = [];
     public List<List<int>> Pieces { get; set; } = [];
     public List<int> Attribute { get; set; } = [];
+    [JsonProperty("SpineID")] public uint SpineId { get; set; }
     public override uint GetId()
     {
         return Icon;
