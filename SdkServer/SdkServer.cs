@@ -17,17 +17,17 @@ public static class SdkServer
 {
     public static void Start(string[] args)
     {
-        BuildWebHost(args).RunAsync();
-    }
+        var builder = Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder
+                    .UseStartup<Startup>()
+                    .ConfigureLogging((_, logging) => { logging.ClearProviders(); })
+                    .UseUrls(ConfigManager.Config.HttpServer.GetDisplayAddress());
+            });
 
-    private static IWebHost BuildWebHost(string[] args)
-    {
-        var builder = WebHost.CreateDefaultBuilder(args)
-            .UseStartup<Startup>()
-            .ConfigureLogging((_, logging) => { logging.ClearProviders(); })
-            .UseUrls(ConfigManager.Config.HttpServer.GetDisplayAddress());
-
-        return builder.Build();
+        var host = builder.Build();
+        host.RunAsync();
     }
 }
 
