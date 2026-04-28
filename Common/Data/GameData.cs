@@ -18,6 +18,7 @@ public static class GameData
     public static Dictionary<uint, Rogue3DDifficultExcel> Rogue3DDifficultData { get; private set; } = [];
     public static Dictionary<uint, SpineExcel> SpineData { get; private set; } = [];
     public static Dictionary<uint, NodeConditionExcel> NodeConditionData { get; private set; } = [];
+    public static List<SupportCardExcel> SupportCardData { get; private set; } = [];
 }
 
 public static class GameResourceTemplateId

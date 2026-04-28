@@ -110,6 +110,26 @@ public class InventoryManager(PlayerInstance player) : BasePlayerManager(player)
         return arInfo;
     }
 
+    public async ValueTask<BaseGameItemInfo?> AddSupportCardItem(uint detail, uint particular, uint level = 1, bool sendPacket = true)
+    {
+        const ItemTypeEnum genre = ItemTypeEnum.TYPE_SUPPORT;
+        var templateId = GameResourceTemplateId.FromGdpl((uint)genre, detail, particular, level);
+        if (InventoryData.Items.Values.Any(x => x.TemplateId == templateId)) return null;
+
+        var info = new BaseGameItemInfo
+        {
+            TemplateId = templateId,
+            UniqueId = InventoryData.NextUniqueUid++,
+            ItemType = genre,
+            ItemCount = 1
+        };
+        InventoryData.Items[info.UniqueId] = info;
+
+        if (sendPacket) await Player.SendPacket(new PacketNtfCallScript([info]));
+
+        return info;
+    }
+
     public async ValueTask<BaseGameItemInfo?> AddManifestationItem(ItemTypeEnum genre, uint detail, uint particular, uint level = 1, bool sendPacket = true)
     {
         if (genre != ItemTypeEnum.TYPE_MANIFESTATION) return null;

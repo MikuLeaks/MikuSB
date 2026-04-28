@@ -66,6 +66,10 @@ public class PlayerInstance(PlayerGameData data)
             {
                 await CharacterManager.AddCharacter((ItemTypeEnum)card.Genre, card.Detail, card.Particular, card.Level, sendPacket:false);
             }
+            foreach (var sc in GameData.SupportCardData)
+            {
+                await InventoryManager.AddSupportCardItem(sc.Detail, sc.Particular, sc.Level, sendPacket: false);
+            }
             foreach (var supplies in GameData.AllSuppliesData)
             {
                 await InventoryManager.AddSuppliesItem(supplies, 90000, false);
