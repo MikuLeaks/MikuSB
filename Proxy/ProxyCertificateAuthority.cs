@@ -30,7 +30,8 @@ public sealed class ProxyCertificateAuthority
                 RootCerPath);
     }
 
-    public string RootCerPath => Path.Combine(CertificateDirectory, "MikuSB.Proxy.Root.cer");
+    public string RootCerPath => Path.Join(CertificateDirectory, "MikuSB.Proxy.Root.cer");
+    public string RootCerPemPath => Path.Join(CertificateDirectory, "MikuSB.Proxy.Root.pem");
 
     private static string CertificateDirectory => Path.Combine(AppContext.BaseDirectory, "proxy-certs");
 
@@ -54,6 +55,12 @@ public sealed class ProxyCertificateAuthority
 
             if (!File.Exists(RootCerPath))
                 File.WriteAllBytes(RootCerPath, existing.Export(X509ContentType.Cert));
+
+            if (!File.Exists(RootCerPemPath))
+            {
+                string pemString = existing.ExportCertificatePem();
+                File.WriteAllText(RootCerPemPath, pemString);
+            }
 
             return existing;
         }
