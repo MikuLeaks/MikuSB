@@ -210,6 +210,7 @@ public class PlayerInstance(PlayerGameData data)
             Sex = Data.Gender,
             Vigor = Data.Vigor,
             Solutions = { LineupManager.LineupData.LineupInfo.Values.Select(x => x.ToProto()) },
+            Badges = { InventoryManager.InventoryData.Items.Values.Where(x => x.ItemType == ItemTypeEnum.TYPE_BADGE).Select(x => (ulong)x.UniqueId) }
         };
 
         foreach (var chara in CharacterManager.CharacterData.Characters) proto.Items.Add(chara.ToProto());
