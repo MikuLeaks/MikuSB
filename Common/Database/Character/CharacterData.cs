@@ -23,13 +23,14 @@ public class CharacterInfo
     public int Trust { get; set; }
     public uint WeaponUniqueId { get; set; }
     public uint SkinId { get; set; }
+    public uint WeaponSkinId { get; set; }
+    public uint SupportTeamIndex { get; set; } = 1;
     public ItemFlagEnum Flag { get; set; } = ItemFlagEnum.FLAG_READED;
     public uint Expiration { get; set; }
     [SugarColumn(IsJson = true)] public List<uint> UnlockedSkin { get; set; } = [];
     [SugarColumn(IsJson = true)] public List<uint> Spines { get; set; } = [];
     [SugarColumn(IsJson = true)] public List<uint> Affixs { get; set; } = [];
-    // Key = EqSlot (= support card Detail), Value = support card UniqueId
-    [SugarColumn(IsJson = true)] public Dictionary<uint, uint> SupportSlots { get; set; } = [];
+    [SugarColumn(IsJson = true)] public Dictionary<uint, uint> SupportSlots { get; set; } = []; // Key = EqSlot (= support card Detail), Value = support card UniqueId
     public long Timestamp { get; set; }
     public uint Count { get; set; } = 1;
 
@@ -55,8 +56,10 @@ public class CharacterInfo
         proto.Enhance.Spines.AddRange(Spines.Select(x => (ulong)x));
         proto.Enhance.Affixs.AddRange(Affixs);
 
-        proto.Slots[4] = WeaponUniqueId;
-        proto.Slots[5] = SkinId;
+        proto.Slots[(uint)ItemCardSlotTypeEnum.SLOT_WEAPON] = WeaponUniqueId;
+        proto.Slots[(uint)ItemCardSlotTypeEnum.SLOT_SKIN] = SkinId;
+        proto.Slots[(uint)ItemCardSlotTypeEnum.SLOT_WEAPON_SKIN] = WeaponSkinId;
+        proto.Slots[(uint)ItemCardSlotTypeEnum.SLOT_SUPPORTERINDEX] = SupportTeamIndex;
         foreach (var (slot, uid) in SupportSlots)
             proto.Slots[slot] = uid;
 

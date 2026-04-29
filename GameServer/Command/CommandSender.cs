@@ -38,9 +38,9 @@ public class PlayerCommandSender(PlayerInstance player) : ICommandSender
             Type = ChatType.Friend,
             Sender = (uint)ConfigManager.Config.ServerOption.ServerProfile.Uid,
             Recver = (uint)Player.Uid,
-            Text = msg,
+            Text = ChatMessageHelper.NormalizeForClient(msg),
             Profile = Player.ToServerFriendProto(),
-            TimeStamp = (uint)Extensions.GetUnixMs()
+            TimeStamp = ChatMessageHelper.BuildClientTimestamp()
         };
         await Player.SendPacket(CmdIds.NtfFriendChat, data);
     }

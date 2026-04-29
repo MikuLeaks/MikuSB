@@ -35,6 +35,12 @@ public class ServerTextCHT
 /// </summary>
 public class WordTextCHT
 {
+    public string CallItem => "召喚道具";
+    public string SkinPart => "外觀部件";
+    public string Profile => "個人資料";
+    public string WeaponSkin => "武器外觀";
+    public string SupportCard => "支援卡";
+    public string Weapon => "武器";
     public string Rank => "星魂";
     public string Avatar => "角色";
     public string Material => "材料";
@@ -121,6 +127,7 @@ public class CommandTextCHT
     public HelpTextCHT Help { get; } = new();
     public GirlTextCHT Girl { get; } = new();
     public GiveAllTextCHT GiveAll { get; } = new();
+    public DebugTextCHT Debug { get; } = new();
 }
 
 #endregion
@@ -218,11 +225,13 @@ public class GirlTextCHT
 
     public string Usage =>
         "用法: /girl add <detail/-1> -p<particular> -l<level> -s<star>\n" +
-        "用法: /girl level <guid/-1> <level>";
+        "用法: /girl level <guid/-1> <level>\n" +
+        "用法: /girl neuronic <guid/-1> <level>";
 
     public string NotFound => "角色不存在！";
     public string Added => "已為玩家新增 {0} 個角色！";
     public string UpdateLevel => "已將 {1} 個角色等級設為 {0}！";
+    public string UpdateNeuronicLevel => "已將 {1} 個角色的神經元等級設置為 {0}！";
 }
 
 /// <summary>
@@ -230,11 +239,31 @@ public class GirlTextCHT
 /// </summary>
 public class GiveAllTextCHT
 {
-    public string Desc => "給玩家所有物品\n" +
-                          "備註: -1 代表全部";
-    public string Usage => "用法: /giveall weapon <detail/-1> -p<particular> -l<level>";
-    public string WeaponNotFound => "找不到武器！";
-    public string WeaponAdded => "已添加 {0} 把武器給玩家！";
+    public string Desc => "給予玩家所有物品\n" +
+                          "注意：-1 表示全部";
+    public string Usage => "用法：/giveall weapon <detail/-1> -p<特定> -l<等級>\n" +
+                           "用法：/giveall weaponskin <detail/-1> -p<特定>\n" +
+                           "用法：/giveall card <detail/-1> -p<特定> -l<等級>" +
+                           "用法：/giveall profile <detail/-1> -g<類型> -p<特定> -l<等級>" +
+                           "用法：/giveall skinpart <detail/-1> -g<類型> -p<特定> -l<等級>" +
+                           "用法：/giveall call <detail/-1> -g<類型> -p<特定> -l<等級>";
+    public string NotFound => "未找到 {0}！";
+    public string GiveAllItems => "已向玩家添加 {0} 個 {1}！";
+}
+
+/// <summary>
+///     path: Game.Command.Debug
+/// </summary>
+public class DebugTextCHT
+{
+    public string Desc => "切換調試封包輸出";
+    public string Usage => "用法: /debug [on|off|simple|detail|file]";
+    public string Enabled => "已啟用調試封包輸出。";
+    public string Disabled => "已停用調試封包輸出。";
+    public string SimpleEnabled => "已啟用簡易調試封包輸出。";
+    public string DetailEnabled => "已啟用詳細調試封包輸出。";
+    public string FileEnabled => "個人調試檔案輸出已啟用。";
+    public string FileDisabled => "個人調試檔案輸出已停用。";
 }
 
 #endregion

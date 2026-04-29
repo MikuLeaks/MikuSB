@@ -1,4 +1,4 @@
-using MikuSB.Database;
+using MikuSB.Enums.Player;
 using MikuSB.Proto;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -8,8 +8,6 @@ namespace MikuSB.GameServer.Server.CallGS.Handlers.Misc;
 [CallGSApi("PlayerSetting_ChangeShowCard")]
 public class PlayerSetting_ChangeShowCard : ICallGSHandler
 {
-    private const int ShowItemGirlIndex = 4;
-
     public async Task Handle(Connection connection, string param, ushort seqNo)
     {
         var player = connection.Player!;
@@ -23,13 +21,9 @@ public class PlayerSetting_ChangeShowCard : ICallGSHandler
             await CallGSRouter.SendScript(connection, "PlayerSetting_ChangeShowCard", "{}");
             return;
         }
-
-        player.SetShowItem(ShowItemGirlIndex, card.Guid);
-        DatabaseHelper.SaveDatabaseType(player.Data);
-
+        player.SetShowItem((int)ProfileShowItemTypeEnum.SHOWITEM_GIRL, card.Guid);
         var sync = new NtfSyncPlayer();
         sync.ShowItems.AddRange(player.Data.ShowItems);
-
         await CallGSRouter.SendScript(connection, "PlayerSetting_ChangeShowCard", "{}", sync);
     }
 }

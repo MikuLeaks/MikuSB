@@ -1,0 +1,36 @@
+﻿using MikuSB.Enums.Player;
+using MikuSB.Proto;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace MikuSB.GameServer.Server.CallGS.Handlers.Misc;
+
+[CallGSApi("PlayerSetting_SetShowCover")]
+public class PlayerSetting_SetShowCover : ICallGSHandler
+{
+    public async Task Handle(Connection connection, string param, ushort seqNo)
+    {
+        var player = connection.Player!;
+        var req = JsonSerializer.Deserialize<SetShowCoverParam>(param);
+        if (req == null)
+            return;
+
+        var item = player.InventoryManager.GetNormalItem(req.Id);
+        if (item == null)
+        {
+            await CallGSRouter.SendScript(connection, "PlayerSetting_SetShowCover", "{\"err\":\"error.BadParam\"}");
+            return;
+        }
+
+        player.SetShowItem((int)ProfileShowItemTypeEnum.SHOWITEM_COVER, item.UniqueId);
+        var sync = new NtfSyncPlayer();
+        sync.ShowItems.AddRange(player.Data.ShowItems);
+        await CallGSRouter.SendScript(connection, "PlayerSetting_SetShowCover", "null", sync);
+    }
+}
+
+internal sealed class SetShowCoverParam
+{
+    [JsonPropertyName("nID")]
+    public uint Id { get; set; }
+}

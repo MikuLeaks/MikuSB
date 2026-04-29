@@ -16,9 +16,15 @@ public static class GameData
     public static Dictionary<uint, ArItemExcel> ArItemData { get; private set; } = [];
     public static Dictionary<uint, ManifestationExcel> ManifestationData { get; private set; } = [];
     public static Dictionary<uint, Rogue3DDifficultExcel> Rogue3DDifficultData { get; private set; } = [];
+    public static Dictionary<int, BreakExcel> BreakData { get; private set; } = [];
     public static Dictionary<uint, SpineExcel> SpineData { get; private set; } = [];
     public static Dictionary<uint, NodeConditionExcel> NodeConditionData { get; private set; } = [];
     public static List<SupportCardExcel> SupportCardData { get; private set; } = [];
+    public static Dictionary<uint, WeaponSkinExcel> WeaponSkinData { get; private set; } = [];
+    public static Dictionary<uint, DailyLevelExcel> DailyLevelData { get; private set; } = [];
+    public static Dictionary<uint, ProfileExcel> ProfileData { get; private set; } = [];
+    public static Dictionary<uint, CardSkinPartsExcel> CardSkinPartsData { get; private set; } = [];
+    public static Dictionary<uint, CallItemExcel> CallItemData { get; private set; } = [];
 }
 
 public static class GameResourceTemplateId

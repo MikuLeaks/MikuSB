@@ -66,10 +66,6 @@ public class PlayerInstance(PlayerGameData data)
             {
                 await CharacterManager.AddCharacter((ItemTypeEnum)card.Genre, card.Detail, card.Particular, card.Level, sendPacket:false);
             }
-            foreach (var sc in GameData.SupportCardData)
-            {
-                await InventoryManager.AddSupportCardItem(sc.Detail, sc.Particular, sc.Level, sendPacket: false);
-            }
             foreach (var supplies in GameData.AllSuppliesData)
             {
                 await InventoryManager.AddSuppliesItem(supplies, 90000, false);
@@ -83,34 +79,6 @@ public class PlayerInstance(PlayerGameData data)
 
             await LineupManager.UpdateLineup(1, selected[0], selected[1], selected[2],false);
 
-            var bootstrapAttrs = BuildLobbyBootstrapAttrs();
-            var existingAttrs = Data.Attrs
-                .ToDictionary(x => (x.Gid, x.Sid));
-            var seenAttrs = new HashSet<(uint Gid, uint Sid)>();
-
-            foreach (var (gid, sid, value) in bootstrapAttrs)
-            {
-                if (!seenAttrs.Add((gid, sid)))
-                    continue;
-
-                if (existingAttrs.TryGetValue((gid, sid), out var attr))
-                {
-                    if (attr.Val < value)
-                        attr.Val = value;
-
-                    continue;
-                }
-
-                var newAttr = new PlayerAttr
-                {
-                    Gid = gid,
-                    Sid = sid,
-                    Val = value
-                };
-
-                Data.Attrs.Add(newAttr);
-                existingAttrs[(gid, sid)] = newAttr;
-            }
         });
         t.Wait();
 
@@ -192,9 +160,9 @@ public class PlayerInstance(PlayerGameData data)
             Sender = sendUid,
             Recver = recvUid,
             Emoji = emojiId ?? 0,
-            Text = message ?? "",
+            Text = ChatMessageHelper.NormalizeForClient(message),
             Profile = Data.ToProfileProto(),
-            TimeStamp = (uint)Extensions.GetUnixMs()
+            TimeStamp = ChatMessageHelper.BuildClientTimestamp()
         };
 
         await SendPacket(CmdIds.NtfFriendChat, data);
@@ -230,6 +198,7 @@ public class PlayerInstance(PlayerGameData data)
 
     public Proto.Player ToPlayerProto()
     {
+        BuildPlayerAttr();
         var displayName = PlayerGameData.NormalizeDisplayName(Data.Name);
         var proto = new Proto.Player
         {
@@ -241,6 +210,7 @@ public class PlayerInstance(PlayerGameData data)
             Sex = Data.Gender,
             Vigor = Data.Vigor,
             Solutions = { LineupManager.LineupData.LineupInfo.Values.Select(x => x.ToProto()) },
+            Badges = { InventoryManager.InventoryData.Items.Values.Where(x => x.ItemType == ItemTypeEnum.TYPE_BADGE).Select(x => (ulong)x.UniqueId) }
         };
 
         foreach (var chara in CharacterManager.CharacterData.Characters) proto.Items.Add(chara.ToProto());
@@ -297,6 +267,38 @@ public class PlayerInstance(PlayerGameData data)
         return (gid << 16) | sid;
     }
 
+    public void BuildPlayerAttr()
+    {
+        var bootstrapAttrs = BuildLobbyBootstrapAttrs();
+        var existingAttrs = Data.Attrs
+            .ToDictionary(x => (x.Gid, x.Sid));
+        var seenAttrs = new HashSet<(uint Gid, uint Sid)>();
+
+        foreach (var (gid, sid, value) in bootstrapAttrs)
+        {
+            if (!seenAttrs.Add((gid, sid)))
+                continue;
+
+            if (existingAttrs.TryGetValue((gid, sid), out var attr))
+            {
+                if (attr.Val < value)
+                    attr.Val = value;
+
+                continue;
+            }
+
+            var newAttr = new PlayerAttr
+            {
+                Gid = gid,
+                Sid = sid,
+                Val = value
+            };
+
+            Data.Attrs.Add(newAttr);
+            existingAttrs[(gid, sid)] = newAttr;
+        }
+    }
+
     private static IEnumerable<(uint Gid, uint Sid, uint Value)> BuildLobbyBootstrapAttrs()
     {
         // GuideLogic uses group 4. Value 999 is safely above every configured step count,
@@ -336,6 +338,12 @@ public class PlayerInstance(PlayerGameData data)
         // Launch.GPASSID = 22 stores pass counts. ChapterLevel.GID = 21 stores star flags.
         // Unlock every level defined in level.json so all chapters are accessible from the start.
         foreach (var levelId in GameData.ChapterLevelData.Keys)
+        {
+            yield return (21, levelId, 7);
+            yield return (22, levelId, 1_700_000_000);
+        }
+
+        foreach (var levelId in GameData.DailyLevelData.Keys)
         {
             yield return (21, levelId, 7);
             yield return (22, levelId, 1_700_000_000);

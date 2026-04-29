@@ -35,10 +35,13 @@ public class ServerTextEN
 /// </summary>
 public class WordTextEN
 {
-    public string Star => "Star";
+    public string CallItem => "Call Item";
+    public string SkinPart => "Skin Part";
+    public string Profile => "Profile";
+    public string WeaponSkin => "Weapon Skin";
     public string Valk => "Valkyrie";
     public string Material => "Material";
-    public string Stigmata => "Stigmata";
+    public string SupportCard => "Support Card";
     public string Weapon => "Weapon";
     public string Banner => "Gacha";
     public string Activity => "Activity";
@@ -83,6 +86,7 @@ public class CommandTextEN
     public HelpTextEN Help { get; } = new();
     public GirlTextEN Girl { get; } = new();
     public GiveAllTextEN GiveAll { get; } = new();
+    public DebugTextEN Debug { get; } = new();
 }
 
 #endregion
@@ -187,11 +191,13 @@ public class GirlTextEN
 
     public string Usage =>
         "Usage: /girl add <detail/-1> -p<particular> -l<level> -s<star>\n" +
-        "Usage: /girl level <guid/-1> <level>";
+        "Usage: /girl level <guid/-1> <level>\n" +
+        "Usage: /girl neuronic <guid/-1> <level>";
 
     public string NotFound => "Character not found!";
     public string Added => "Granted {0} character(s) to player!";
     public string UpdateLevel => "Set {1} character(s) to level {0}!";
+    public string UpdateNeuronicLevel => "Set {1} character(s) Neuronic to level {0}!";
 }
 
 /// <summary>
@@ -201,9 +207,29 @@ public class GiveAllTextEN
 {
     public string Desc => "Give all items to player\n"+
                           "Note: -1 means all";
-    public string Usage => "Usage: /giveall weapon <detail/-1> -p<particular> -l<level>";
-    public string WeaponNotFound => "Weapon not found!";
-    public string WeaponAdded => "Added {0} weapon(s) to player!";
+    public string Usage => "Usage: /giveall weapon <detail/-1> -p<particular> -l<level>\n" +
+                           "Usage: /giveall weaponskin <detail/-1> -p<particular>\n" +
+                           "Usage: /giveall card <detail/-1> -p<particular> -l<level>" +
+                           "Usage: /giveall profile <detail/-1> -g<genre> -p<particular> -l<level>" +
+                           "Usage: /giveall skinpart <detail/-1> -g<genre> -p<particular> -l<level>" +
+                           "Usage: /giveall call <detail/-1> -g<genre> -p<particular> -l<level>";
+    public string NotFound => "{0} not found!";
+    public string GiveAllItems => "Added {0} {1} to player!";
+}
+
+/// <summary>
+///     path: Game.Command.Debug
+/// </summary>
+public class DebugTextEN
+{
+    public string Desc => "Toggle debug packet output";
+    public string Usage => "Usage: /debug [on|off|simple|detail|file]";
+    public string Enabled => "Debug packet output enabled.";
+    public string Disabled => "Debug packet output disabled.";
+    public string SimpleEnabled => "Simple debug packet output enabled.";
+    public string DetailEnabled => "Detailed debug packet output enabled.";
+    public string FileEnabled => "Personal debug file output enabled.";
+    public string FileDisabled => "Personal debug file output disabled.";
 }
 
 #endregion

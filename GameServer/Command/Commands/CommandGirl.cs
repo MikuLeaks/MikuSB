@@ -84,4 +84,49 @@ public class CommandGirl : ICommands
                 level.ToString(),
                 girls.Count.ToString()));
     }
+
+    [CommandMethod("neuronic")]
+    public async ValueTask UpdateNeuronicLevel(CommandArg arg)
+    {
+        if (!await arg.CheckOnlineTarget()) return;
+        if (!await arg.CheckArgCnt(2)) return;
+
+        var guid = arg.GetInt(0);
+        var level = Math.Clamp(arg.GetInt(1), 0, 6);
+        var player = arg.Target!.Player!;
+        List<CharacterInfo> girls = [];
+
+        List<uint> spines = new List<uint>();
+        for (int i = 0; i < 6; i++)
+            spines.Add(i < level ? 511u : 0u);
+
+        uint proLevel = (uint)(spines.Count(x => x == 511) / 2);
+
+        if (guid == -1)
+        {
+            foreach (var girl in player.CharacterManager.CharacterData.Characters)
+            {
+                girl.Spines = spines;
+                girl.ProLevel = proLevel;
+                girls.Add(girl);
+            }
+        }
+        else
+        {
+            var girl = player.CharacterManager.GetCharacterByGUID((uint)guid);
+            if (girl == null)
+            {
+                await arg.SendMsg(I18NManager.Translate("Game.Command.Girl.NotFound"));
+                return;
+            }
+            girl.Spines = spines;
+            girl.ProLevel = proLevel;
+            girls.Add(girl);
+        }
+
+        if (girls.Count > 0) await player.SendPacket(new PacketNtfCallScript(girls));
+        await arg.SendMsg(I18NManager.Translate("Game.Command.Girl.UpdateNeuronicLevel",
+                    level.ToString(), 
+                    girls.Count.ToString()));
+    }
 }

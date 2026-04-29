@@ -25,7 +25,8 @@ public class SupporterCard_Equip : ICallGSHandler
             return;
         }
 
-        var slot = (uint)req.EqSlot;
+        var teamIndex = card.SupportTeamIndex;
+        var slot = GetTeamIndex((uint)req.EqSlot, teamIndex);
 
         // If an existing card is equipped in this slot and bForce is false, ask for confirmation
         if (!req.Force && req.CurrentEquippedUid != 0 && card.SupportSlots.TryGetValue(slot, out var existing) && existing != 0)
@@ -45,6 +46,14 @@ public class SupporterCard_Equip : ICallGSHandler
         // Req_EquipChange (no Model) → Logistics_Change; Req_Equip (has Model) → Logistics_Equip
         var responseApi = string.IsNullOrEmpty(req.Model) ? "Logistics_Change" : "Logistics_Equip";
         await CallGSRouter.SendScript(connection, responseApi, "{}", sync);
+    }
+
+    private uint GetTeamIndex(uint slot, uint teamIndex)
+    {
+        if (teamIndex == 1) return slot;
+        if (teamIndex == 2) return slot + 7;
+        if (teamIndex == 3) return slot + 10;
+        return slot;
     }
 }
 
