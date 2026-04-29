@@ -24,6 +24,7 @@ public static class GameData
     public static Dictionary<uint, DailyLevelExcel> DailyLevelData { get; private set; } = [];
     public static Dictionary<uint, ProfileExcel> ProfileData { get; private set; } = [];
     public static Dictionary<uint, CardSkinPartsExcel> CardSkinPartsData { get; private set; } = [];
+    public static Dictionary<uint, CallItemExcel> CallItemData { get; private set; } = [];
 }
 
 public static class GameResourceTemplateId

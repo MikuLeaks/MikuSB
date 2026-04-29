@@ -35,6 +35,7 @@ public class ServerTextCHS
 /// </summary>
 public class WordTextCHS
 {
+    public string CallItem => "召唤道具";
     public string SkinPart => "皮肤部件";
     public string Profile => "个人资料";
     public string WeaponSkin => "武器皮肤";
@@ -244,7 +245,8 @@ public class GiveAllTextCHS
                            "用法：/giveall weaponskin <detail/-1> -p<特定>\n" +
                            "用法：/giveall card <detail/-1> -p<特定> -l<等級>" +
                            "用法：/giveall profile <detail/-1> -g<类型> -p<特定> -l<等级>" +
-                           "用法：/giveall skinpart <detail/-1> -g<類型> -p<特定> -l<等級>";
+                           "用法：/giveall skinpart <detail/-1> -g<類型> -p<特定> -l<等級>" +
+                           "用法：/giveall call <detail/-1> -g<類型> -p<特定> -l<等級>";
     public string NotFound => "未找到 {0}！";
     public string GiveAllItems => "已向玩家添加 {0} 个 {1}！";
 }

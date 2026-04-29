@@ -291,4 +291,25 @@ public class InventoryManager(PlayerInstance player) : BasePlayerManager(player)
 
         return skinPartInfo;
     }
+
+    public async ValueTask<BaseGameItemInfo?> AddCallItem(ItemTypeEnum genre, uint detail, uint particular, uint level = 1, bool sendPacket = true)
+    {
+        if (genre != ItemTypeEnum.TYPE_CALL) return null;
+        var callData = GameData.CallItemData.Values.FirstOrDefault(x => x.Genre == (int)genre && x.Detail == detail && x.Particular == particular && x.Level == level);
+        if (callData == null) return null;
+        var templateId = GameResourceTemplateId.FromGdpl((uint)genre, detail, particular, level);
+        if (InventoryData.Items.Values.Any(x => x.TemplateId == templateId)) return null;
+        var callInfo = new BaseGameItemInfo
+        {
+            TemplateId = templateId,
+            UniqueId = InventoryData.NextUniqueUid++,
+            ItemType = genre,
+            ItemCount = 1
+        };
+        InventoryData.Items[callInfo.UniqueId] = callInfo;
+
+        if (sendPacket) await Player.SendPacket(new PacketNtfCallScript([callInfo]));
+
+        return callInfo;
+    }
 }
