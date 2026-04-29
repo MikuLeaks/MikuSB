@@ -87,6 +87,7 @@ public class CommandTextEN
     public GirlTextEN Girl { get; } = new();
     public GiveAllTextEN GiveAll { get; } = new();
     public DebugTextEN Debug { get; } = new();
+    public GmMenuTextEN GmMenu { get; } = new();
 }
 
 #endregion
@@ -230,6 +231,17 @@ public class DebugTextEN
     public string DetailEnabled => "Detailed debug packet output enabled.";
     public string FileEnabled => "Personal debug file output enabled.";
     public string FileDisabled => "Personal debug file output disabled.";
+}
+
+/// <summary>
+///     path: Game.Command.GmMenu
+/// </summary>
+public class GmMenuTextEN
+{
+    public string Desc => "Toggle GM menu";
+    public string Usage => "Usage: /gm [on|off]";
+    public string Enabled => "GM menu enabled.";
+    public string Disabled => "GM menu disabled.";
 }
 
 #endregion
