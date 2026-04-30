@@ -35,6 +35,7 @@ public class ServerTextCHT
 /// </summary>
 public class WordTextCHT
 {
+    public string WeaponPart => "武器部件";
     public string CallItem => "召喚道具";
     public string SkinPart => "外觀部件";
     public string Profile => "個人資料";
@@ -247,6 +248,7 @@ public class GiveAllTextCHT
                            "用法：/giveall card <detail/-1> -p<特定> -l<等級>" +
                            "用法：/giveall profile <detail/-1> -g<類型> -p<特定> -l<等級>" +
                            "用法：/giveall skinpart <detail/-1> -g<類型> -p<特定> -l<等級>" +
+                           "用法：/giveall weaponpart <detail/-1> -g<類型> -p<特定> -l<等級>" +
                            "用法：/giveall call <detail/-1> -g<類型> -p<特定> -l<等級>";
     public string NotFound => "未找到 {0}！";
     public string GiveAllItems => "已向玩家添加 {0} 個 {1}！";

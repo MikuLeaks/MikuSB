@@ -74,19 +74,28 @@ public sealed class ProxyServer(
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
             }
+            catch (SocketException) when (stoppingToken.IsCancellationRequested)
+            {
+                // ignore stop
+            }
             catch (SocketException ex)
             {
                 logger.Info($"MikuSB proxy listening error {ex}");
                 _options.Port += Random.Shared.Next(1, 500); // try another port
                 await Task.Delay(100, stoppingToken);
             }
+            catch (ObjectDisposedException) when (stoppingToken.IsCancellationRequested)
+            {
+            }
         }
     }
 
-    public override Task StopAsync(CancellationToken cancellationToken)
+    public override async Task StopAsync(CancellationToken cancellationToken)
     {
+        // Cancel the BackgroundService token first so shutdown exceptions are treated as expected.
+        var stopTask = base.StopAsync(cancellationToken);
         _listener?.Stop();
-        return base.StopAsync(cancellationToken);
+        await stopTask;
     }
 
     private async Task HandleClientAsync(TcpClient client, CancellationToken cancellationToken)
@@ -97,7 +106,7 @@ public sealed class ProxyServer(
             // let SDK server return IP/address for client to connect with
             // api: /api/serverlist, /query_version, /query
             var cliAddr = client.Client.RemoteEndPoint;
-            logger.Info($"Proxy New client: {cliAddr}");
+            // logger.Debug($"Proxy New client: {cliAddr}");
             try
             {
                 await HandleClientCoreAsync(client, cancellationToken);
@@ -119,7 +128,7 @@ public sealed class ProxyServer(
             {
                 logger.Warn($"Proxy client failed {ex}");
             }
-            logger.Info($"Proxy client close: {cliAddr}");
+            // logger.Debug($"Proxy client close: {cliAddr}");
         }
     }
 
@@ -201,7 +210,7 @@ public sealed class ProxyServer(
     {
         var pathAndQuery = request.GetPathAndQuery();
         var uri = new Uri($"http://{_options.ServerHttpAddress}:{_options.ServerHttpPort}{pathAndQuery}");
-        logger.Info($"Redirect: {request.Method} {request.HostOverride ?? request.Host}{pathAndQuery} -> {uri}");
+        if (ConfigManager.Config.HttpServer.EnableLog) logger.Info($"Redirect: {request.Method} {request.HostOverride ?? request.Host}{pathAndQuery} -> {uri}");
         await SendHttpRequestAsync(clientStream, request, uri, true, cancellationToken);
     }
 

@@ -62,6 +62,7 @@ public abstract class GrowableItemInfo : BaseGameItemInfo
 
 public class GameWeaponInfo : GrowableItemInfo
 {
+    [SugarColumn(IsJson = true)] public Dictionary<uint, ulong> PartSlots { get; set; } = [];
     public override Item ToProto()
     {
         var proto = new Item
@@ -78,6 +79,7 @@ public class GameWeaponInfo : GrowableItemInfo
                 Evolue = Evolue
             }
         };
+        foreach (var (slot, uid) in PartSlots) proto.Slots[slot] = uid;
         return proto;
     }
 }

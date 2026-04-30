@@ -1,12 +1,7 @@
-﻿using Azure;
-using MikuSB.Data;
-using MikuSB.Database;
+﻿using MikuSB.Data;
 using MikuSB.Database.Inventory;
-using MikuSB.Enums.Item;
-using MikuSB.GameServer.Game.Player;
 using MikuSB.Proto;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace MikuSB.GameServer.Server.CallGS.Handlers.Girl;

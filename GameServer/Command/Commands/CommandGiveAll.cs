@@ -222,4 +222,40 @@ public class CommandGiveAll : ICommands
         await arg.SendMsg(I18NManager.Translate("Game.Command.GiveAll.GiveAllItems",
             I18NManager.Translate("Word.CallItem"), callItems.Count.ToString()));
     }
+
+    [CommandMethod("weaponpart")]
+    public async ValueTask GiveAllWeaponPart(CommandArg arg)
+    {
+        if (!await arg.CheckOnlineTarget()) return;
+        if (await arg.GetOption('p') is not int particular) return;
+        if (await arg.GetOption('l') is not int level) return;
+        if (await arg.GetOption('g') is not int genre) return;
+
+        var detail = arg.GetInt(0);
+        var player = arg.Target!.Player!;
+        List<BaseGameItemInfo> weaponPartItems = [];
+        if (detail == -1)
+        {
+            // add all
+            foreach (var config in GameData.WeaponPartsData.Values)
+            {
+                var weaponPart = await player.InventoryManager!
+                    .AddWeaponPartItem((ItemTypeEnum)config.Genre, config.Detail, config.Particular, config.Level, false);
+                if (weaponPart != null) weaponPartItems.Add(weaponPart);
+            }
+        }
+        else
+        {
+            var weaponPart = await player.InventoryManager!.AddWeaponPartItem((ItemTypeEnum)genre, (uint)detail, (uint)particular, (uint)level, false);
+            if (weaponPart == null)
+            {
+                await arg.SendMsg(I18NManager.Translate("Game.Command.GiveAll.NotFound", I18NManager.Translate("Word.WeaponPart")));
+                return;
+            }
+            weaponPartItems.Add(weaponPart);
+        }
+        if (weaponPartItems.Count > 0) await player.SendPacket(new PacketNtfCallScript(weaponPartItems));
+        await arg.SendMsg(I18NManager.Translate("Game.Command.GiveAll.GiveAllItems",
+            I18NManager.Translate("Word.WeaponPart"), weaponPartItems.Count.ToString()));
+    }
 }

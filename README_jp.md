@@ -32,7 +32,7 @@ English documentation is available in [README.md](README.md).
 
 ## 要件
 
-- [.NET SDK 9.0](https://dotnet.microsoft.com/ja-jp/download/dotnet/9.0)
+- [.NET SDK 10.0](https://dotnet.microsoft.com/ja-jp/download/dotnet/10.0)
 
 ## 起動方法
 

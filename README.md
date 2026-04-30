@@ -32,7 +32,7 @@
 
 ## Requirements
 
-- [.NET SDK 9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+- [.NET SDK 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 
 ## Running
 
