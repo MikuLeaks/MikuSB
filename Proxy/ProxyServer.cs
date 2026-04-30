@@ -56,21 +56,30 @@ public sealed class ProxyServer(
             return;
         }
 
-        var address = IPAddress.Parse(_options.BindAddress);
-        _listener = new TcpListener(address, _options.Port);
-        _listener.Start();
-        logger.Info($"MikuSB proxy listening on {_listener.LocalEndpoint}");
-
-        try
+        for (var i = 0; i < 20; i++)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                var client = await _listener.AcceptTcpClientAsync(stoppingToken);
-                _ = Task.Run(() => HandleClientAsync(client, stoppingToken), stoppingToken);
+                var address = IPAddress.Parse(_options.BindAddress);
+                _listener = new TcpListener(address, _options.Port);
+                _listener.Start();
+                logger.Info($"MikuSB proxy listening on {_listener.LocalEndpoint}");
+
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    var client = await _listener.AcceptTcpClientAsync(stoppingToken);
+                    _ = Task.Run(() => HandleClientAsync(client, stoppingToken), stoppingToken);
+                }
             }
-        }
-        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-        {
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+            }
+            catch (SocketException ex)
+            {
+                logger.Info($"MikuSB proxy listening error {ex}");
+                _options.Port += Random.Shared.Next(1, 500); // try another port
+                await Task.Delay(100, stoppingToken);
+            }
         }
     }
 
