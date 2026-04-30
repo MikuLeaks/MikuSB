@@ -86,7 +86,7 @@ public sealed class ProxyServer(
     {
         using (client)
         {
-            logger.Info($"Proxy New client: {client.Client.RemoteEndPoint}");
+            //logger.Debug($"Proxy New client: {client.Client.RemoteEndPoint}");
             try
             {
                 await HandleClientCoreAsync(client, cancellationToken);
