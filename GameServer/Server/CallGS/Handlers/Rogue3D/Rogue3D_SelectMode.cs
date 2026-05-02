@@ -8,6 +8,7 @@ public class Rogue3D_SelectMode : ICallGSHandler
 {
     public async Task Handle(Connection connection, string param, ushort seqNo)
     {
-        await CallGSRouter.SendScript(connection, "Rogue3D_SelectMode", "{}");
+        var sync = Rogue3DStateHelper.EnsureUnlockState(connection.Player!);
+        await CallGSRouter.SendScript(connection, "Rogue3D_SelectMode", "{}", sync);
     }
 }

@@ -16,6 +16,9 @@ public static class GameData
     public static Dictionary<uint, ArItemExcel> ArItemData { get; private set; } = [];
     public static Dictionary<uint, ManifestationExcel> ManifestationData { get; private set; } = [];
     public static Dictionary<uint, Rogue3DDifficultExcel> Rogue3DDifficultData { get; private set; } = [];
+    public static Dictionary<uint, Rogue3DSeasonExcel> Rogue3DSeasonData { get; private set; } = [];
+    public static Dictionary<uint, Rogue3DTalentExcel> Rogue3DTalentData { get; private set; } = [];
+    public static Dictionary<uint, Rogue3DDailyBuffExcel> Rogue3DDailyBuffData { get; private set; } = [];
     public static Dictionary<int, BreakExcel> BreakData { get; private set; } = [];
     public static Dictionary<uint, SpineExcel> SpineData { get; private set; } = [];
     public static Dictionary<uint, NodeConditionExcel> NodeConditionData { get; private set; } = [];
