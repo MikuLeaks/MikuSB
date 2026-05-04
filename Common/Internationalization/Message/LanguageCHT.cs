@@ -228,12 +228,14 @@ public class GirlTextCHT
     public string Usage =>
         "用法: /girl add <detail/-1> -p<particular> -l<level> -s<star>\n" +
         "用法: /girl level <guid/-1> <level>\n" +
-        "用法: /girl neuronic <guid/-1> <level>";
+        "用法: /girl neuronic <guid/-1> <level>\n" +
+        "用法: /girl manifestation <guid/-1> <level>";
 
     public string NotFound => "角色不存在！";
     public string Added => "已為玩家新增 {0} 個角色！";
     public string UpdateLevel => "已將 {1} 個角色等級設為 {0}！";
     public string UpdateNeuronicLevel => "已將 {1} 個角色的神經元等級設置為 {0}！";
+    public string UpdateManifestationLevel => "已将 {1} 个角色的天啟/武格等级设置为 {0}！";
 }
 
 /// <summary>

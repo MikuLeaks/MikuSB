@@ -194,12 +194,15 @@ public class GirlTextEN
     public string Usage =>
         "Usage: /girl add <detail/-1> -p<particular> -l<level> -s<star>\n" +
         "Usage: /girl level <guid/-1> <level>\n" +
-        "Usage: /girl neuronic <guid/-1> <level>";
+        "Usage: /girl neuronic <guid/-1> <level>\n" +
+        "Usage: /girl manifestation <guid/-1> <level>";
 
     public string NotFound => "Character not found!";
     public string Added => "Granted {0} character(s) to player!";
     public string UpdateLevel => "Set {1} character(s) to level {0}!";
     public string UpdateNeuronicLevel => "Set {1} character(s) Neuronic to level {0}!";
+
+    public string UpdateManifestationLevel => "Set {1} character(s) Manifestation to level {0}!";
 }
 
 /// <summary>
