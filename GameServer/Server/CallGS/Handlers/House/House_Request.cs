@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace MikuSB.GameServer.Server.CallGS.Handlers.House;
@@ -30,8 +29,9 @@ public class House_Request : ICallGSHandler
             return;
         }
 
-        var err = new JsonObject { ["FuncName"] = req.FuncName, ["sErr"] = "error.NotImplemented" };
-        await CallGSRouter.SendScript(connection, "House_Request", err.ToJsonString());
+        var root = HouseJson.ParseObject(param);
+        if (root == null) return;
+        await CallGSRouter.SendScript(connection, "House_Request", HouseRequestScript.Synthesize(root));
     }
 }
 
