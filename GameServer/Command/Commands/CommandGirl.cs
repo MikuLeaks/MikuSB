@@ -129,4 +129,41 @@ public class CommandGirl : ICommands
                     level.ToString(), 
                     girls.Count.ToString()));
     }
+
+    [CommandMethod("manifestation")]
+    public async ValueTask UpdateManifestationLevel(CommandArg arg)
+    {
+        if (!await arg.CheckOnlineTarget()) return;
+        if (!await arg.CheckArgCnt(2)) return;
+
+        var guid = arg.GetInt(0);
+        var level = Math.Clamp(arg.GetInt(1), 0, 45);
+        var player = arg.Target!.Player!;
+        List<CharacterInfo> girls = [];
+
+        if (guid == -1)
+        {
+            foreach (var girl in player.CharacterManager.CharacterData.Characters)
+            {
+                girl.Break = (uint)level;
+                girls.Add(girl);
+            }
+        }
+        else
+        {
+            var girl = player.CharacterManager.GetCharacterByGUID((uint)guid);
+            if (girl == null)
+            {
+                await arg.SendMsg(I18NManager.Translate("Game.Command.Girl.NotFound"));
+                return;
+            }
+            girl.Break = (uint)level;
+            girls.Add(girl);
+        }
+
+        if (girls.Count > 0) await player.SendPacket(new PacketNtfCallScript(girls));
+        await arg.SendMsg(I18NManager.Translate("Game.Command.Girl.UpdateManifestationLevel",
+                    level.ToString(),
+                    girls.Count.ToString()));
+    }
 }

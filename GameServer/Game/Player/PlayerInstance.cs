@@ -143,6 +143,13 @@ public class PlayerInstance(PlayerGameData data)
         if (Connection?.IsOnline == true) await Connection.SendPacket(cmdId,msg);
     }
 
+    public async Task SendScript(string api, string arg, NtfSyncPlayer extra = null!)
+    {
+        if (Connection?.IsOnline != true) return;
+        var rsp = new NtfCallScript { Api = api, Arg = arg, ExtraSync = extra };
+        await Connection.SendPacket(CmdIds.NtfScript, rsp);
+    }
+
     #endregion
 
     #region Actions
