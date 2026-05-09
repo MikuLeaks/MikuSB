@@ -5,7 +5,7 @@
 
 ### setup steam launch options as following
 
-`HTTP_PROXY="http://127.0.0.1:8888" HTTPS_PROXY="http://127.0.0.1:8888" ALL_PROXY="http://127.0.0.1:8888" %command%`
+`ALL_PROXY="http://127.0.0.1:8888" %command%`
 
 ### start local server and keep it running
 
@@ -13,12 +13,12 @@
 ./MikuSB
 ```
 
-### find root CA cert, and create ca bundle
+### ~~find root CA cert, and create ca bundle~~ no neeeded
 
 root CA cert, should in the path: `proxy-certs/MikuSB.Proxy.Root.pem`
 
 
-### setup root CA for proton/wine
+### ~~setup root CA for proton/wine~~ no neeeded
 
 not sure, even I remove Proton PFX (Wine prefix) folder, without redo this step, still no cert issue.
 

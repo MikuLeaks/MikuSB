@@ -88,6 +88,7 @@ public class CommandTextEN
     public GirlTextEN Girl { get; } = new();
     public GiveAllTextEN GiveAll { get; } = new();
     public DebugTextEN Debug { get; } = new();
+    public GmMenuTextEN GmMenu { get; } = new();
 }
 
 #endregion
@@ -193,12 +194,15 @@ public class GirlTextEN
     public string Usage =>
         "Usage: /girl add <detail/-1> -p<particular> -l<level> -s<star>\n" +
         "Usage: /girl level <guid/-1> <level>\n" +
-        "Usage: /girl neuronic <guid/-1> <level>";
+        "Usage: /girl neuronic <guid/-1> <level>\n" +
+        "Usage: /girl manifestation <guid/-1> <level>";
 
     public string NotFound => "Character not found!";
     public string Added => "Granted {0} character(s) to player!";
     public string UpdateLevel => "Set {1} character(s) to level {0}!";
     public string UpdateNeuronicLevel => "Set {1} character(s) Neuronic to level {0}!";
+
+    public string UpdateManifestationLevel => "Set {1} character(s) Manifestation to level {0}!";
 }
 
 /// <summary>
@@ -232,6 +236,17 @@ public class DebugTextEN
     public string DetailEnabled => "Detailed debug packet output enabled.";
     public string FileEnabled => "Personal debug file output enabled.";
     public string FileDisabled => "Personal debug file output disabled.";
+}
+
+/// <summary>
+///     path: Game.Command.GmMenu
+/// </summary>
+public class GmMenuTextEN
+{
+    public string Desc => "Toggle GM menu";
+    public string Usage => "Usage: /gm [on|off]";
+    public string Enabled => "GM menu enabled.";
+    public string Disabled => "GM menu disabled.";
 }
 
 #endregion

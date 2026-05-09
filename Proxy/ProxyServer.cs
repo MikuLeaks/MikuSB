@@ -18,8 +18,6 @@ public sealed class ProxyServer(
     HttpClient httpClient,
     Logger logger) : BackgroundService
 {
-    private const string ListenAddress = "127.0.0.1";
-    private const string ServerHost = "127.0.0.1";
     private static readonly string[] TargetDomains =
     [
         "amazingseasuncdn.com",
@@ -58,27 +56,37 @@ public sealed class ProxyServer(
             return;
         }
 
-        var address = IPAddress.Parse(ListenAddress);
-        _listener = new TcpListener(address, _options.Port);
-        _listener.Start();
-        logger.Info($"MikuSB proxy listening on {ListenAddress}:{_options.Port}");
-
-        try
+        for (var i = 0; i < 20; i++)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                var client = await _listener.AcceptTcpClientAsync(stoppingToken);
-                _ = Task.Run(() => HandleClientAsync(client, stoppingToken), stoppingToken);
+                var address = IPAddress.Parse(_options.BindAddress);
+                _listener = new TcpListener(address, _options.Port);
+                _listener.Start();
+                logger.Info($"MikuSB proxy listening on {_listener.LocalEndpoint}");
+
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    var client = await _listener.AcceptTcpClientAsync(stoppingToken);
+                    _ = Task.Run(() => HandleClientAsync(client, stoppingToken), stoppingToken);
+                }
             }
-        }
-        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-        {
-        }
-        catch (SocketException) when (stoppingToken.IsCancellationRequested)
-        {
-        }
-        catch (ObjectDisposedException) when (stoppingToken.IsCancellationRequested)
-        {
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+            }
+            catch (SocketException) when (stoppingToken.IsCancellationRequested)
+            {
+                // ignore stop
+            }
+            catch (SocketException ex)
+            {
+                logger.Info($"MikuSB proxy listening error {ex}");
+                _options.Port += Random.Shared.Next(1, 500); // try another port
+                await Task.Delay(100, stoppingToken);
+            }
+            catch (ObjectDisposedException) when (stoppingToken.IsCancellationRequested)
+            {
+            }
         }
     }
 
@@ -94,7 +102,11 @@ public sealed class ProxyServer(
     {
         using (client)
         {
-            //logger.Debug($"Proxy New client: {client.Client.RemoteEndPoint}");
+            // TODO: pass client.Client.LocalEndPoint to SDK server
+            // let SDK server return IP/address for client to connect with
+            // api: /api/serverlist, /query_version, /query
+            var cliAddr = client.Client.RemoteEndPoint;
+            // logger.Debug($"Proxy New client: {cliAddr}");
             try
             {
                 await HandleClientCoreAsync(client, cancellationToken);
@@ -116,7 +128,7 @@ public sealed class ProxyServer(
             {
                 logger.Warn($"Proxy client failed {ex}");
             }
-            logger.Info($"Proxy client close: {client.Client.RemoteEndPoint}");
+            // logger.Debug($"Proxy client close: {cliAddr}");
         }
     }
 
@@ -197,7 +209,7 @@ public sealed class ProxyServer(
     private async Task ForwardToServerAsync(Stream clientStream, ProxyHttpRequest request, CancellationToken cancellationToken)
     {
         var pathAndQuery = request.GetPathAndQuery();
-        var uri = new Uri($"http://{ServerHost}:{_options.ServerHttpPort}{pathAndQuery}");
+        var uri = new Uri($"http://{_options.ServerHttpAddress}:{_options.ServerHttpPort}{pathAndQuery}");
         if (ConfigManager.Config.HttpServer.EnableLog) logger.Info($"Redirect: {request.Method} {request.HostOverride ?? request.Host}{pathAndQuery} -> {uri}");
         await SendHttpRequestAsync(clientStream, request, uri, true, cancellationToken);
     }
@@ -227,7 +239,7 @@ public sealed class ProxyServer(
             return false;
 
         return uri.Host is "127.0.0.1" or "localhost" or "::1"
-            || uri.Host.Equals(ListenAddress, StringComparison.OrdinalIgnoreCase);
+            || uri.Host.Equals(_options.BindAddress, StringComparison.OrdinalIgnoreCase);
     }
 
     private async Task SendHttpRequestAsync(Stream clientStream, ProxyHttpRequest request, Uri uri, bool addCors, CancellationToken cancellationToken)

@@ -129,6 +129,7 @@ public class CommandTextCHS
     public GirlTextCHS Girl { get; } = new();
     public GiveAllTextCHS GiveAll { get; } = new();
     public DebugTextCHS Debug { get; } = new();
+    public GmMenuTextCHS GmMenu { get; } = new();
 }
 
 #endregion
@@ -227,12 +228,14 @@ public class GirlTextCHS
     public string Usage =>
         "用法: /girl add <detail/-1> -p<particular> -l<level> -s<star>\n" +
         "用法: /girl level <guid/-1> <level>\n" +
-        "用法: /girl neuronic <guid/-1> <level>";
+        "用法: /girl neuronic <guid/-1> <level>\n" +
+        "用法: /girl manifestation <guid/-1> <level>";
 
     public string NotFound => "角色不存在！";
     public string Added => "已为玩家添加 {0} 个角色！";
     public string UpdateLevel => "已将 {1} 个角色等级设置为 {0}！";
     public string UpdateNeuronicLevel => "已将 {1} 个角色的神经元等级设置为 {0}！";
+    public string UpdateManifestationLevel => "已将 {1} 个角色的天启/武格等级设置为 {0}！";
 }
 
 /// <summary>
@@ -266,6 +269,17 @@ public class DebugTextCHS
     public string DetailEnabled => "已启用详细调试包输出。";
     public string FileEnabled => "个人调试文件输出已启用。";
     public string FileDisabled => "个人调试文件输出已禁用。";
+}
+
+/// <summary>
+///     path: Game.Command.GmMenu
+/// </summary>
+public class GmMenuTextCHS
+{
+    public string Desc => "切换GM选单";
+    public string Usage => "用法: /gm [on|off]";
+    public string Enabled => "已启用GM选单。";
+    public string Disabled => "已禁用GM选单。";
 }
 
 #endregion

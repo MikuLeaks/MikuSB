@@ -13,7 +13,7 @@ public class ConfigContainer
 
 public class HttpServerConfig
 {
-    public string BindAddress { get; set; } = "0.0.0.0";
+    public string BindAddress { get; set; } = "127.0.0.1";
     public string PublicAddress { get; set; } = "127.0.0.1";
     public int Port { get; set; } = 21500;
     public bool EnableLog { get; set; } = false;
@@ -31,7 +31,7 @@ public class HttpServerConfig
 
 public class GameServerConfig
 {
-    public string BindAddress { get; set; } = "0.0.0.0";
+    public string BindAddress { get; set; } = "127.0.0.1";
     public string PublicAddress { get; set; } = "127.0.0.1";
     public int Port { get; set; } = 21000;
     public int KcpAliveMs { get; set; } = 45000;
@@ -86,7 +86,9 @@ public class ServerProfile
 public class ProxyOptions
 {
     public bool Enabled { get; set; } = true;
+    public string BindAddress { get; set; } =  "127.0.0.1";
     public int Port { get; set; } = 8888;
+    public string ServerHttpAddress { get; set; } =  "127.0.0.1";
     public int ServerHttpPort { get; set; } = 21500;
     public bool InstallRootCertificate { get; set; } = true;
     public bool ManageSystemProxy { get; set; } = true;

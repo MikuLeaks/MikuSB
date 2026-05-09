@@ -11,6 +11,10 @@ namespace MikuSB.SdkServer.Handlers;
 public class RouteController : ControllerBase
 {
     public static ConfigContainer Config = ConfigManager.Config;
+        public static JsonSerializerOptions JsonOption = new()
+		{
+            PropertyNamingPolicy = null,  // no snake_case
+        };
 
     public static object BuildServerList(string version = "")
     {
@@ -95,7 +99,9 @@ public class RouteController : ControllerBase
             msg = "success"
         };
 
-        return Ok(rsp);
+        // return Ok(rsp);
+        var json = JsonSerializer.Serialize(rsp, JsonOption);
+        return Content(json, "application/json");
     }
 
     [HttpGet("/seasun/config")]
@@ -105,48 +111,80 @@ public class RouteController : ControllerBase
         object rsp = new
         {
             code = 0,
+            msg = "操作成功",
             data = new
             {
-                agreementUpdateTime = "1728552600000",
-                appDownLoadUrl = "",
-                enableReportDataToDouyin = false,
-                loginType = new[] { "channel" },
-                openActivationCode = false,
-                qqGroup = (string?)null,
-                privacyUpdateTime = "1728552600000",
-                realNameAuth = false
+                platformPrivacyAgreement = "", // https url
+                payType = new[]
+                {
+                    "mycard",
+                },
+                loginType = new[]
+                {
+                    "mail",
+                    "google",
+                    "twitter",
+                    "guest",
+                    "steam",
+                },
+                closeGeetest = false,
+                userAgreement = "", // https url
+                privacyAgreement = "", // https url
+                initPrivacyUpdateTime = 0,
+                platformUserAgreement = "", // https url
+                // accountPublicKey = "", // pem string?
+                payChannel = Array.Empty<string>(),
+                registerPrivacyUrl = "", // https url
+                loginPrivacyUrl = "", // https url
+                // agreementUpdateTime = "1728552600000",
+                // appDownLoadUrl = "",
+                // enableReportDataToDouyin = false,
+                // openActivationCode = false,
+                // qqGroup = (string?)null,
+                // privacyUpdateTime = "1728552600000",
+                // realNameAuth = false
             },
-            msg = "success"
         };
 
-        return Ok(rsp);
+        // return Ok(rsp);
+        var json = JsonSerializer.Serialize(rsp, JsonOption);
+        return Content(json, "application/json");
+    }
+
+
+    public class LoginByTokenReq
+    {
+        public string? uid { get; set; }
+        public string? token { get; set; }
     }
 
     [HttpGet("/seasun/loginByToken")]
     [HttpPost("/seasun/loginByToken")]
     public IActionResult LoginByToken(
-        [FromQuery] string? uid,
-        [FromQuery] string? token,
+        // [FromQuery] string? uid,
+        // [FromQuery] string? token,
         [FromForm] string? form_uid,
-        [FromForm] string? form_token
+        [FromForm] string? form_token,
+        [FromBody] LoginByTokenReq? body
     )
     {
-        string finalUid = uid ?? form_uid ?? "10001";
-        string finalToken = token ?? form_token ?? Guid.NewGuid().ToString("N");
+        string finalUid = body?.uid ?? form_uid ?? "10001";
+        string finalToken = body?.token ?? form_token ?? Guid.NewGuid().ToString("N");
 
         object rsp = new
         {
             code = 0,
             data = new
             {
-                associatedAccounts = new[]
-            {
-                new { bindStatus = false, nickname = "", thirdPartyType = "mail" },
-                new { bindStatus = true, nickname = Config.GameServer.GameServerName, thirdPartyType = "google" },
-                new { bindStatus = false, nickname = "", thirdPartyType = "twitter" },
-                new { bindStatus = false, nickname = "", thirdPartyType = "guest" },
-                new { bindStatus = false, nickname = "", thirdPartyType = "steam" }
-            },
+            //     associatedAccounts = new[]
+            // {
+            //     new { bindStatus = false, nickname = "", thirdPartyType = "mail" },
+            //     new { bindStatus = true, nickname = Config.GameServer.GameServerName, thirdPartyType = "google" },
+            //     new { bindStatus = false, nickname = "", thirdPartyType = "twitter" },
+            //     new { bindStatus = false, nickname = "", thirdPartyType = "guest" },
+            //     new { bindStatus = false, nickname = "", thirdPartyType = "steam" }
+            // },
+                associatedAccounts = Array.Empty<string>(),
                 isFirstLogin = false,
                 isNeedKoreaSciAuth = false,
                 ksOpenId = $"ks_{finalUid}",
@@ -156,13 +194,15 @@ public class RouteController : ControllerBase
                 status = 0,
                 thirdPartyUid = "",
                 token = finalToken,
-                type = "google",
-                uid = finalUid
+                type = "guest", // google
+                uid = long.Parse(finalUid),
             },
             msg = "操作成功"
         };
 
-        return Ok(rsp);
+        // return Ok(rsp);
+        var json = JsonSerializer.Serialize(rsp, JsonOption);
+        return Content(json, "application/json");
     }
 
     [HttpGet("/seasun/getAccountInfoForGame")]

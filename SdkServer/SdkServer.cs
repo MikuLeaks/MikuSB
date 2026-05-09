@@ -23,7 +23,7 @@ public static class SdkServer
                 webBuilder
                     .UseStartup<Startup>()
                     .ConfigureLogging((_, logging) => { logging.ClearProviders(); })
-                    .UseUrls(ConfigManager.Config.HttpServer.GetDisplayAddress());
+                    .UseUrls(ConfigManager.Config.HttpServer.GetBindDisplayAddress());
             });
 
         var host = builder.Build();
