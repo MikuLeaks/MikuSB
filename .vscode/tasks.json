@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run MikuSB",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"run",
+				"--project",
+				".\\MikuSB\\MikuSB.csproj"
+			],
+			"isBackground": true,
+			"group": "build"
+		}
+	]
+}

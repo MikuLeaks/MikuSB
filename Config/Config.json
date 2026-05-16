@@ -31,6 +31,7 @@
       "Name": "Miku-chan",
       "Uid": 80
     },
+    "EnableAutoUpdate": true,
     "AutoCreateUser": true,
     "SavePersonalDebugFile": false,
     "AutoSendResponseWhenNoHandler": true,

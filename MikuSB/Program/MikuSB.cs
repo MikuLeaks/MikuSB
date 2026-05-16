@@ -1,5 +1,6 @@
 ﻿using MikuSB.Data;
 using MikuSB.Database;
+using MikuSB.Loader;
 using MikuSB.MikuSB.Tool;
 using MikuSB.GameServer.Command;
 using MikuSB.GameServer.Server;
@@ -22,13 +23,16 @@ public class MikuSB
     private static readonly CancellationTokenSource _cts = new();
     private static int _exitCode = 0;
 
-    public static async Task Main()
+    public static async Task Main(string[] args)
     {
+        Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         var time = DateTime.Now;
         IConsole.InitConsole();
         LoaderManager.InitConfig();
         if (await UpdateService.TryStartSelfUpdateAsync())
             return;
+
+        TryRunStartupGame(args);
 
         RegisterExitEvent();
         await LoaderManager.InitSdkServer();
@@ -63,6 +67,51 @@ public class MikuSB
         await consoleTask;
 
         await ProcessExit(Volatile.Read(ref _exitCode));
+    }
+
+    private static void TryRunStartupGame(string[] args)
+    {
+        if (!args.Any(x => string.Equals(x, "-game", StringComparison.OrdinalIgnoreCase)))
+            return;
+
+        try
+        {
+            var extraGameArgs = ParseGameCommandArgs(args);
+            var pid = GameLaunchService.Launch(extraGameArgs);
+            Logger.Info(I18NManager.Translate("Game.Command.Game.Started", pid.ToString(CultureInfo.InvariantCulture)));
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(I18NManager.Translate("Game.Command.Game.Failed", ex.Message), ex);
+        }
+    }
+
+    private static string[] ParseGameCommandArgs(string[] args)
+    {
+        var extraArgs = new List<string>();
+        var hasPathOverride = false;
+
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (string.Equals(args[i], "-path", StringComparison.OrdinalIgnoreCase))
+            {
+                if (i + 1 < args.Length)
+                {
+                    ConfigManager.Config.Loader.GamePath = args[++i];
+                    hasPathOverride = true;
+                }
+            }
+            else if (string.Equals(args[i], "-arg", StringComparison.OrdinalIgnoreCase))
+            {
+                if (i + 1 < args.Length)
+                    extraArgs.Add(args[++i]);
+            }
+        }
+
+        if (hasPathOverride)
+            Logger.Info("Startup -path override applied for this run.");
+
+        return extraArgs.ToArray();
     }
 
     #region Exit

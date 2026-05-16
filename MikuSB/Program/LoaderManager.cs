@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using MikuSB.Data;
 using MikuSB.Database;
+using MikuSB.Database.Account;
 using MikuSB.GameServer.Command;
 using MikuSB.GameServer.Server;
 using MikuSB.GameServer.Server.CallGS;
@@ -19,6 +20,9 @@ namespace MikuSB.MikuSB.Program;
 
 public class LoaderManager : MikuSB
 {
+    private const string InitialAccountUsername = "MIKU";
+    private const int InitialAccountUid = 1;
+
     public static void InitConfig()
     {
         // Initialize log
@@ -99,12 +103,20 @@ public class LoaderManager : MikuSB
 
     public static void InitDatabase()
     {
+        var databaseFile = new FileInfo(Path.Combine(
+            ConfigManager.Config.Path.DatabasePath,
+            ConfigManager.Config.GameServer.DatabaseName));
+        var shouldInitializeData = !databaseFile.Exists;
+
         // Initialize the database
         try
         {
             _ = Task.Run(DatabaseHelper.Initialize); // do not wait
 
             while (!DatabaseHelper.LoadAccount) Thread.Sleep(100);
+
+            if (shouldInitializeData)
+                InitializeStartupData();
 
             Logger.Info(I18NManager.Translate("Server.ServerInfo.LoadedItem",
                 I18NManager.Translate("Word.DatabaseAccount")));
@@ -116,6 +128,16 @@ public class LoaderManager : MikuSB
             Console.ReadLine();
             return;
         }
+    }
+
+    private static void InitializeStartupData()
+    {
+        if (AccountData.GetFirstAccount() != null)
+            return;
+
+        var startupPassword = Crypto.CreateSessionKey($"{InitialAccountUsername}-{DateTime.UtcNow.Ticks}");
+        _ = AccountData.CreateAccount(InitialAccountUsername, InitialAccountUid, startupPassword);
+        Logger.Info("Initialized startup account for fresh database.");
     }
 
     public static async Task InitSdkServer()

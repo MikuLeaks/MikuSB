@@ -61,6 +61,7 @@ public class ServerOption
     public string FallbackLanguage { get; set; } = "EN";
     public string[] DefaultPermissions { get; set; } = ["Admin"];
     public ServerProfile ServerProfile { get; set; } = new();
+    public bool EnableAutoUpdate { get; set; } = true;
     public bool EnableGmMenu { get; set; } = false;
     public bool AutoCreateUser { get; set; } = true;
     public bool SavePersonalDebugFile { get; set; } = false;

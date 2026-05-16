@@ -19,6 +19,8 @@ namespace MikuSB.GameServer.Game.Player;
 
 public class PlayerInstance(PlayerGameData data)
 {
+    private const uint BootstrapLevel = 80;
+
     #region Property
     public Connection? Connection { get; set; }
 
@@ -50,35 +52,7 @@ public class PlayerInstance(PlayerGameData data)
         var t = Task.Run(async () =>
         {
             await InitialPlayerManager();
-            foreach (var skinCard in GameData.CardSkinData.Values)
-            {
-                await InventoryManager.AddSkinItem((ItemTypeEnum)skinCard.Genre, skinCard.Detail, skinCard.Particular, skinCard.Level, false);
-            }
-            foreach (var ar in GameData.ArItemData.Values)
-            {
-                await InventoryManager.AddArItem((ItemTypeEnum)ar.Genre, ar.Detail, ar.Particular, ar.Level, false);
-            }
-            foreach (var manifest in GameData.ManifestationData.Values)
-            {
-                await InventoryManager.AddManifestationItem((ItemTypeEnum)manifest.Genre, manifest.Detail, manifest.Particular, manifest.Level, false);
-            }
-            foreach (var card in GameData.CardData.Values)
-            {
-                await CharacterManager.AddCharacter((ItemTypeEnum)card.Genre, card.Detail, card.Particular, card.Level, sendPacket:false);
-            }
-            foreach (var supplies in GameData.AllSuppliesData)
-            {
-                await InventoryManager.AddSuppliesItem(supplies, 90000, false);
-            }
-
-            var selected = CharacterManager.CharacterData.Characters
-                .OrderBy(_ => Guid.NewGuid())
-                .Take(3)
-                .Select(x => x.Guid)
-                .ToList();
-
-            await LineupManager.UpdateLineup(1, selected[0], selected[1], selected[2],false);
-
+            await InitializeAllDatabaseData();
         });
         t.Wait();
 
@@ -106,6 +80,7 @@ public class PlayerInstance(PlayerGameData data)
     public async ValueTask OnEnterGame()
     {
         if (!Initialized) await InitialPlayerManager();
+        if (ShouldBackfillAllDatabaseData()) await InitializeAllDatabaseData();
         Data.EnsureDisplayName();
         await CharacterManager.RepairCharacterWeapons();
         await EnsureSupplies();
@@ -144,6 +119,117 @@ public class PlayerInstance(PlayerGameData data)
     }
 
     #endregion
+
+    private bool ShouldBackfillAllDatabaseData()
+    {
+        if (CharacterManager.CharacterData.Characters.Count > 0)
+            return false;
+
+        var inventoryData = InventoryManager.InventoryData;
+        return inventoryData.Items.Count == 0
+               && inventoryData.Weapons.Count == 0
+               && inventoryData.Skins.Count == 0
+               && inventoryData.SupportCards.Count == 0;
+    }
+
+    private async ValueTask InitializeAllDatabaseData()
+    {
+        foreach (var weapon in GameData.WeaponData.Values)
+        {
+            if (weapon.Level <= 0)
+                continue;
+
+            await InventoryManager.AddWeaponItem((ItemTypeEnum)weapon.Genre, weapon.Detail, weapon.Particular,
+                weapon.Level, BootstrapLevel, false);
+        }
+        foreach (var supportCard in GameData.SupportCardData)
+        {
+            if (supportCard.Level <= 0)
+                continue;
+
+            await InventoryManager.AddSupportCardItem(supportCard.Detail, supportCard.Particular, supportCard.Level, BootstrapLevel, false);
+        }
+        foreach (var weaponSkin in GameData.WeaponSkinData.Values)
+        {
+            if (weaponSkin.Level <= 0)
+                continue;
+
+            await InventoryManager.AddWeaponSkinItem((ItemTypeEnum)weaponSkin.Genre, weaponSkin.Detail, weaponSkin.Particular, weaponSkin.Level, false);
+        }
+        foreach (var skinCard in GameData.CardSkinData.Values)
+        {
+            if (skinCard.Level <= 0)
+                continue;
+
+            await InventoryManager.AddSkinItem((ItemTypeEnum)skinCard.Genre, skinCard.Detail, skinCard.Particular, skinCard.Level, false);
+        }
+        foreach (var profile in GameData.ProfileData.Values)
+        {
+            if (profile.Level <= 0)
+                continue;
+
+            await InventoryManager.AddProfileItem((ItemTypeEnum)profile.Genre, profile.Detail, profile.Particular, profile.Level, false);
+        }
+        foreach (var skinPart in GameData.CardSkinPartsData.Values)
+        {
+            if (skinPart.Level <= 0)
+                continue;
+
+            await InventoryManager.AddSkinPartItem((ItemTypeEnum)skinPart.Genre, skinPart.Detail, skinPart.Particular, skinPart.Level, false);
+        }
+        foreach (var callItem in GameData.CallItemData.Values)
+        {
+            if (callItem.Level <= 0)
+                continue;
+
+            await InventoryManager.AddCallItem((ItemTypeEnum)callItem.Genre, callItem.Detail, callItem.Particular, callItem.Level, false);
+        }
+        foreach (var weaponPart in GameData.WeaponPartsData.Values)
+        {
+            if (weaponPart.Level <= 0)
+                continue;
+
+            await InventoryManager.AddWeaponPartItem((ItemTypeEnum)weaponPart.Genre, weaponPart.Detail, weaponPart.Particular, weaponPart.Level, false);
+        }
+        foreach (var furniture in GameData.DormGiftData.Values)
+        {
+            if (furniture.Level <= 0)
+                continue;
+
+            await InventoryManager.AddHouseFurnitureItem((ItemTypeEnum)furniture.Genre, furniture.Detail, furniture.Particular, furniture.Level, false);
+        }
+        foreach (var ar in GameData.ArItemData.Values)
+        {
+            await InventoryManager.AddArItem((ItemTypeEnum)ar.Genre, ar.Detail, ar.Particular, ar.Level, false);
+        }
+        foreach (var manifest in GameData.ManifestationData.Values)
+        {
+            await InventoryManager.AddManifestationItem((ItemTypeEnum)manifest.Genre, manifest.Detail, manifest.Particular, manifest.Level, false);
+        }
+        foreach (var card in GameData.CardData.Values)
+        {
+            var character = await CharacterManager.AddCharacter((ItemTypeEnum)card.Genre, card.Detail, card.Particular, card.Level, sendPacket: false);
+            if (character == null)
+                continue;
+
+            character.Level = BootstrapLevel;
+        }
+        foreach (var supplies in GameData.AllSuppliesData)
+        {
+            await InventoryManager.AddSuppliesItem(supplies, 90000, false);
+        }
+
+        if (!LineupManager.LineupData.LineupInfo.ContainsKey(1))
+        {
+            var selected = CharacterManager.CharacterData.Characters
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(3)
+                .Select(x => x.Guid)
+                .ToList();
+            if (selected.Count == 3)
+                await LineupManager.UpdateLineup(1, selected[0], selected[1], selected[2], false);
+        }
+    }
 
     #region Actions
     public async ValueTask OnHeartBeat()

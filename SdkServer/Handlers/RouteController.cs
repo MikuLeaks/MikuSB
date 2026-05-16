@@ -190,6 +190,9 @@ public class RouteController : ControllerBase
         }
     }
 
+    private static AccountData? ResolveAutoLoginAccount()
+        => AccountData.GetFirstAccount();
+
     private IActionResult BuildLoginFailedResponse(string message)
     {
         object rsp = new
@@ -220,12 +223,12 @@ public class RouteController : ControllerBase
         [FromQuery] string? uid,
         [FromQuery] string? token,
         [FromForm] string? form_uid,
-        [FromForm] string? form_token
-    )
+        [FromForm] string? form_token)
     {
-        var finalUid = uid ?? form_uid ?? await GetJsonBodyValue("uid");
-        var finalToken = token ?? form_token ?? await GetJsonBodyValue("token");
-        var account = ResolveAccountForSdkLogin(null, finalUid, finalToken);
+        var bodyUid = await GetJsonBodyValue("uid");
+        var bodyToken = await GetJsonBodyValue("token");
+        var account = ResolveAccountForSdkLogin(null, uid ?? form_uid ?? bodyUid, token ?? form_token ?? bodyToken)
+                      ?? ResolveAutoLoginAccount();
         if (account == null)
             return BuildLoginFailedResponse("Account not found.");
 
@@ -264,10 +267,10 @@ public class RouteController : ControllerBase
         [FromQuery] string? email,
         [FromForm] string? form_uid,
         [FromForm] string? form_token,
-        [FromForm] string? form_email
-    )
+        [FromForm] string? form_email)
     {
-        var finalEmail = email ?? form_email ?? await GetJsonBodyValue("email");
+        var bodyEmail = await GetJsonBodyValue("email");
+        var finalEmail = email ?? form_email ?? bodyEmail;
         if (!string.IsNullOrWhiteSpace(finalEmail))
         {
             var normalizedEmail = finalEmail.Trim();
@@ -306,9 +309,10 @@ public class RouteController : ControllerBase
             return Ok(emailLoginRsp);
         }
 
-        var finalUid = uid ?? form_uid ?? await GetJsonBodyValue("uid");
-        var finalToken = token ?? form_token ?? await GetJsonBodyValue("token");
-        var account = ResolveAccountForSdkLogin(finalEmail, finalUid, finalToken);
+        var bodyUid = await GetJsonBodyValue("uid");
+        var bodyToken = await GetJsonBodyValue("token");
+        var account = ResolveAccountForSdkLogin(finalEmail, uid ?? form_uid ?? bodyUid, token ?? form_token ?? bodyToken)
+                      ?? ResolveAutoLoginAccount();
         if (account == null)
             return BuildLoginFailedResponse("Account not found.");
 

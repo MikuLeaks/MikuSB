@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run MikuSB (build output dir)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/MikuSB/bin/Debug/net10.0/MikuSB.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}/MikuSB/bin/Debug/net10.0",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    }
+  ]
+}

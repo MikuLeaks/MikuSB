@@ -46,6 +46,9 @@ public class HandlerReqLogin : Handler
         }
     }
 
+    private static AccountData? ResolveAutoLoginAccount()
+        => AccountData.GetFirstAccount();
+
     public override async Task OnHandle(Connection connection, byte[] data, ushort seqNo)
     {
         var req = ReqLogin.Parser.ParseFrom(data);
@@ -56,9 +59,14 @@ public class HandlerReqLogin : Handler
                       ?? AccountData.GetAccountByDispatchToken(sdkAuthToken ?? "");
         if (account == null)
         {
-            Logger.Warn($"Rejected login: provider={req.Provider}, token={req.Token}, authToken={sdkAuthToken}");
-            await connection.SendPacket(CmdIds.NtfLogout);
-            return;
+            account = ResolveAutoLoginAccount();
+            if (account == null)
+            {
+                Logger.Warn($"Rejected login: provider={req.Provider}, token={req.Token}, authToken={sdkAuthToken}, reason=no account exists");
+                await connection.SendPacket(CmdIds.NtfLogout);
+                return;
+            }
+            Logger.Warn($"Auto login accepted with first account: provider={req.Provider}, token={req.Token}, authToken={sdkAuthToken}, username={account.Username}, uid={account.Uid}");
         }
         if (!ResourceManager.IsLoaded)
             // resource manager not loaded, return

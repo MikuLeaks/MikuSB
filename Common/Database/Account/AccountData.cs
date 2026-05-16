@@ -40,6 +40,11 @@ public class AccountData : BaseDatabaseDataHelper
         return result;
     }
 
+    public static AccountData? GetFirstAccount()
+        => DatabaseHelper.GetAllInstance<AccountData>()?
+            .OrderBy(account => account.Uid)
+            .FirstOrDefault();
+
     public static AccountData? GetAccountByDispatchToken(string dispatchToken)
     {
         AccountData? result = null;

@@ -11,7 +11,6 @@ namespace MikuSB.MikuSB.Update;
 public static class UpdateService
 {
     private static readonly Logger Logger = new("Updater");
-    private static readonly bool UpdateEnabled = true;
     private static readonly bool AskBeforeUpdate = true;
     private static readonly string RepositoryOwner = "MikuLeaks";
     private static readonly string RepositoryName = "MikuSB";
@@ -30,8 +29,11 @@ public static class UpdateService
 
     public static async Task<bool> TryStartSelfUpdateAsync()
     {
-        if (!UpdateEnabled)
+        if (!ConfigManager.Config.ServerOption.EnableAutoUpdate)
+        {
+            Logger.Debug("Auto update skipped because it is disabled in Config.json.");
             return false;
+        }
 
         if (string.IsNullOrWhiteSpace(RepositoryOwner)
             || string.IsNullOrWhiteSpace(RepositoryName)
@@ -166,6 +168,7 @@ public static class UpdateService
 
         return RequiredResourceFiles.All(fileName => File.Exists(Path.Combine(resourcePath, fileName)));
     }
+
 
     private static async Task DownloadAndInstallResourcesAsync()
     {
