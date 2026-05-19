@@ -21,6 +21,7 @@ namespace MikuSB.GameServer.Server.Packet.Recv.Login;
 public class HandlerReqLogin : Handler
 {
     private static readonly Logger Logger = new("ReqLogin");
+    private const int SupportCardLoginSplitThreshold = 2000;
 
     private static string? ExtractSdkAuthToken(string? token)
     {
@@ -80,7 +81,10 @@ public class HandlerReqLogin : Handler
             $"Debug-{DateTime.Now:yyyy-MM-dd HH-mm-ss}.log");
         await connection.Player.OnEnterGame();
         connection.Player.Connection = connection;
-        await connection.SendPacket(new PacketRspLogin(connection.Player!));
+        var splitSupportCards = connection.Player.InventoryManager.InventoryData.SupportCards.Count > SupportCardLoginSplitThreshold;
+        await connection.SendPacket(new PacketRspLogin(connection.Player!, !splitSupportCards));
+        if (splitSupportCards)
+            await SendSupportCardsOnLogin(connection);
         await connection.SendPacket(new PacketNtfCallScript(connection.Player!));
         await SendDebugLoginState(connection);
 
@@ -88,6 +92,22 @@ public class HandlerReqLogin : Handler
         await connection.SendPacket(new PacketNtfUpdateFriend(connection.Player!));
         ApplySavedGirlSkinTypes(connection.Player!);
         await SendGirlSkinTypeOnLogin(connection);
+    }
+
+    private static async Task SendSupportCardsOnLogin(Connection connection)
+    {
+        var player = connection.Player;
+        if (player == null)
+            return;
+
+        var supportCards = player.InventoryManager.InventoryData.SupportCards.Values.ToList();
+        Logger.Info($"Split support card sync on login: total={supportCards.Count}, chunkSize={SupportCardLoginSplitThreshold}");
+
+        foreach (var chunk in supportCards.Chunk(SupportCardLoginSplitThreshold))
+        {
+            var packet = new PacketNtfCallScript(chunk.ToList());
+            await connection.SendPacket(packet);
+        }
     }
 
     private static void ApplySavedGirlSkinTypes(PlayerInstance player)
