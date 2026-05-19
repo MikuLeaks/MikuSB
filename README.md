@@ -7,6 +7,12 @@
 
 日本語のドキュメントは [README_jp.md](README_jp.md) にあります。
 
+## Scam Warning
+
+MikuSB is completely free and open source.
+If anyone sold you this server or charged money to provide it, that was a scam.
+Request a refund immediately and report the seller to us on Discord with any relevant proof or purchase details.
+
 ## Overview
 
 - `SdkServer`

@@ -27,6 +27,7 @@ public class MikuSB
         var time = DateTime.Now;
         IConsole.InitConsole();
         LoaderManager.InitConfig();
+        ShowAntiScamWarning();
         if (await UpdateService.TryStartSelfUpdateAsync())
             return;
 
@@ -63,6 +64,16 @@ public class MikuSB
         await consoleTask;
 
         await ProcessExit(Volatile.Read(ref _exitCode));
+    }
+
+    private static void ShowAntiScamWarning()
+    {
+        Logger.Warn("============================================================");
+        Logger.Warn("MikuSB is completely free and open source.");
+        Logger.Warn("If you paid anyone for this server, you were scammed.");
+        Logger.Warn("Request a refund immediately and report the seller to us.");
+        Logger.Warn("Discord: https://discord.gg/aMwCu9JyUR");
+        Logger.Warn("============================================================");
     }
 
     #region Exit

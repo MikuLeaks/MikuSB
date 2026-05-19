@@ -7,6 +7,12 @@
 
 English documentation is available in [README.md](README.md).
 
+## 詐欺に関する警告
+
+MikuSB は完全無料のオープンソースです。  
+このサーバーを誰かから有料で販売された場合、それは詐欺です。  
+すぐに返金を申請し、購入記録や証拠とあわせて Discord で私たちに通報してください。  
+
 ## 概要
 
 - `SdkServer`

@@ -35,6 +35,9 @@ public static class GameData
     public static Dictionary<uint, GuideExcel> GuideData { get; private set; } = [];
     public static Dictionary<uint, DormGiftExcel> DormGiftData { get; private set; } = [];
     public static Dictionary<uint, HouseFurniturePosExcel> HouseFurniturePosData { get; private set; } = [];
+    public static Dictionary<uint, GachaExcel> GachaData { get; private set; } = [];
+    public static Dictionary<uint, GachaProbabilityExcel> GachaProbabilityData { get; private set; } = [];
+    public static Dictionary<string, List<GachaPoolItem>> GachaPoolData { get; private set; } = [];
 }
 
 public static class GameResourceTemplateId
