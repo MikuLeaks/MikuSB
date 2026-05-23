@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using MikuSB.GameServer.Game.BossPvp;
 using MikuSB.Proto;
+using MikuSB.GameServer.Server.CallGS.Handlers.Tower;
 
 namespace MikuSB.GameServer.Server.CallGS.Handlers.Chapter;
 
@@ -52,6 +53,13 @@ public class Chapter_DealLevelSettlement : ICallGSHandler
         if (string.Equals(sCmd, "BossPvpLogic_LevelFail", StringComparison.Ordinal))
         {
             var (response, sync) = BossPvpService.HandleFail(connection.Player!, tbParam);
+            extraSync = sync;
+            return response;
+        }
+
+        if (string.Equals(sCmd, "TowerLevel_LevelSettlement", StringComparison.Ordinal))
+        {
+            var (response, sync) = TowerLevel_LevelSettlement.HandleSettlement(connection.Player!, tbParam);
             extraSync = sync;
             return response;
         }

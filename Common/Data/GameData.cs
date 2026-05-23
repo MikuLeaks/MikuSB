@@ -21,6 +21,7 @@ public static class GameData
     public static Dictionary<uint, Rogue3DTalentExcel> Rogue3DTalentData { get; private set; } = [];
     public static Dictionary<uint, Rogue3DDailyBuffExcel> Rogue3DDailyBuffData { get; private set; } = [];
     public static Dictionary<int, BreakExcel> BreakData { get; private set; } = [];
+    public static Dictionary<int, SpecialBreakExcel> SpecialBreakData { get; private set; } = [];
     public static Dictionary<uint, SpineExcel> SpineData { get; private set; } = [];
     public static Dictionary<uint, NodeConditionExcel> NodeConditionData { get; private set; } = [];
     public static List<SupportCardExcel> SupportCardData { get; private set; } = [];
@@ -32,6 +33,8 @@ public static class GameData
     public static Dictionary<uint, BossPvpBossChallengeExcel> BossPvpBossChallengeData { get; private set; } = [];
     public static Dictionary<uint, BossPvpBossExcel> BossPvpBossData { get; private set; } = [];
     public static Dictionary<uint, BossPvpNumExcel> BossPvpNumData { get; private set; } = [];
+    public static Dictionary<uint, ClimbTowerTimeExcel> ClimbTowerTimeData { get; private set; } = [];
+    public static Dictionary<uint, TowerLevelExcel> TowerLevelData { get; private set; } = [];
     public static Dictionary<uint, ProfileExcel> ProfileData { get; private set; } = [];
     public static Dictionary<uint, CardSkinPartsExcel> CardSkinPartsData { get; private set; } = [];
     public static Dictionary<uint, CallItemExcel> CallItemData { get; private set; } = [];
