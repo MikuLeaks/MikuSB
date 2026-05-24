@@ -45,7 +45,8 @@ public class Chapter_DealLevelSettlement : ICallGSHandler
 
         if (string.Equals(sCmd, "BossPvpLogic_LevelSettlement", StringComparison.Ordinal))
         {
-            var (response, sync) = BossPvpService.HandleSettlement(connection.Player!, tbParam);
+            var normalized = NormalizeBossPvpSettlement(tbParam);
+            var (response, sync) = BossPvpService.HandleSettlement(connection.Player!, normalized);
             extraSync = sync;
             return response;
         }
@@ -64,7 +65,30 @@ public class Chapter_DealLevelSettlement : ICallGSHandler
             return response;
         }
 
+        if (string.Equals(sCmd, "TowerEventChapter_LevelSettlement", StringComparison.Ordinal))
+        {
+            var (response, sync) = TowerEventChapter_LevelSettlement.HandleSettlement(connection.Player!, tbParam);
+            extraSync = sync;
+            return response;
+        }
+
         return tbParam?.DeepClone() ?? new JsonObject();
+    }
+
+    private static JsonNode? NormalizeBossPvpSettlement(JsonNode? tbParam)
+    {
+        if (tbParam is not JsonObject obj)
+            return tbParam;
+
+        var clone = obj.DeepClone() as JsonObject ?? obj;
+        if (clone.TryGetPropertyValue("ResidueTime", out var residueNode) &&
+            residueNode is JsonValue residueValue &&
+            residueValue.TryGetValue<double>(out var residueTime))
+        {
+            clone["ResidueTime"] = (int)Math.Max(0, Math.Round(residueTime, MidpointRounding.AwayFromZero));
+        }
+
+        return clone;
     }
 }
 

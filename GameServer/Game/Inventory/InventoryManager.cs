@@ -208,6 +208,27 @@ public class InventoryManager(PlayerInstance player) : BasePlayerManager(player)
         return InventoryData.Items.Values.FirstOrDefault(x => x.TemplateId == templateId);
     }
 
+    public async ValueTask<BaseGameItemInfo?> AddMonsterCardItem(uint detail, uint particular, uint level = 1, bool sendPacket = true)
+    {
+        const ItemTypeEnum genre = ItemTypeEnum.TYPE_MONSTER_CARD;
+        var templateId = GameResourceTemplateId.FromGdpl((uint)genre, detail, particular, level);
+        if (!GameData.MonsterCardData.ContainsKey(templateId))
+            return null;
+
+        var monsterInfo = new BaseGameItemInfo
+        {
+            TemplateId = templateId,
+            UniqueId = InventoryData.NextUniqueUid++,
+            ItemType = genre,
+            ItemCount = 1
+        };
+        InventoryData.Items[monsterInfo.UniqueId] = monsterInfo;
+
+        if (sendPacket) await Player.SendPacket(new PacketNtfCallScript([monsterInfo]));
+
+        return monsterInfo;
+    }
+
     private static uint GetSuppliesMaxCount(SuppliesExcel suppliesData) =>
         suppliesData.Genre == 5 && suppliesData.Detail == 4 ? 999999u : 99999u;
 
