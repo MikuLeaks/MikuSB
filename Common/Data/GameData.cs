@@ -56,6 +56,9 @@ public static class GameData
     public static Dictionary<uint, VirCaptureCaptureRegionExcel> VirCaptureCaptureRegionData { get; private set; } = [];
     public static Dictionary<uint, VirCaptureLevelListExcel> VirCaptureLevelListData { get; private set; } = [];
     public static Dictionary<ulong, MonsterCardExcel> MonsterCardData { get; private set; } = [];
+    public static Dictionary<uint, FishingFoodExcel> FishingFoodData { get; private set; } = [];
+    public static Dictionary<uint, VirCaptureTowerExcel> VirCaptureTowerData { get; private set; } = [];
+    public static Dictionary<uint, DreamCardActivityExcel> DreamCardActivityData { get; private set; } = [];
 }
 
 public static class GameResourceTemplateId

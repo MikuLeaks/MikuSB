@@ -9,6 +9,7 @@ public class VirCaptureTimeExcel : ExcelResource
     [JsonProperty("StartTime")] public string StartTime { get; set; } = "";
     [JsonProperty("EndTime")] public string EndTime { get; set; } = "";
     [JsonProperty("CaptureRegionId")] public List<uint> CaptureRegionId { get; set; } = [];
+    [JsonProperty("MaxExp")] public uint MaxExp { get; set; }
 
     public override uint GetId() => Id;
 
