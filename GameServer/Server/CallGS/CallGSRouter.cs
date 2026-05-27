@@ -8,6 +8,7 @@ public static class CallGSRouter
 {
     private static readonly Logger Logger = new("CallGS");
     private static readonly Dictionary<string, ICallGSHandler> Handlers = [];
+    private const string UnavailableTipKey = "ui.TxtNotOpen";
 
     public static void Init()
     {
@@ -32,16 +33,25 @@ public static class CallGSRouter
             catch (Exception e)
             {
                 Logger.Error($"[{req.Api}] {e.Message}", e);
+                await SendUnavailableResponse(connection, req.Api);
             }
             return;
         }
 
         Logger.Error($"No handler for CallGS API: {req.Api}");
+        await SendUnavailableResponse(connection, req.Api);
     }
 
     public static async Task SendScript(Connection connection, string api, string arg, NtfSyncPlayer extra = null!)
     {
         var rsp = new NtfCallScript { Api = api, Arg = arg, ExtraSync = extra };
         await connection.SendPacket(CmdIds.NtfScript, rsp);
+    }
+
+    private static Task SendUnavailableResponse(Connection connection, string api)
+    {
+        // Many client Lua handlers treat sErr/sError as a recoverable failure path,
+        // which is preferable to leaving the request hanging forever.
+        return SendScript(connection, api, $$"""{"sErr":"{{UnavailableTipKey}}","sError":"{{UnavailableTipKey}}"}""");
     }
 }

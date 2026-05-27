@@ -205,6 +205,8 @@ public class PlayerInstance(PlayerGameData data)
             Pid = (ulong)Data.Uid,
             Account = displayName,
             Provider = displayName,
+            Channel = "gm",
+            Subchannel = "gm",
             Name = displayName,
             Level = Data.Level,
             Sex = Data.Gender,
@@ -240,6 +242,11 @@ public class PlayerInstance(PlayerGameData data)
         foreach (var x in Data.StrAttrs)
         {
             proto.StrAttrs[ToShiftedAttrKey(x.Gid, x.Sid)] = x.Val;
+        }
+
+        foreach (var (key, value) in BuildMoneySync())
+        {
+            proto.Money[key] = value;
         }
 
         proto.ShowItems.AddRange(Data.ShowItems);
@@ -293,6 +300,24 @@ public class PlayerInstance(PlayerGameData data)
             return sid;
 
         return (gid << 16) | sid;
+    }
+
+    public Dictionary<string, int> BuildMoneySync()
+    {
+        var currentMoney = (int)Math.Min(int.MaxValue, GetAttrValue(1, 3));
+        var sync = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["."] = currentMoney,
+            ["gm.gm"] = currentMoney,
+            ["jinshan.jinshan"] = currentMoney,
+            ["pc_jinshan.pc_jinshan"] = currentMoney
+        };
+        return sync;
+    }
+
+    private uint GetAttrValue(uint gid, uint sid)
+    {
+        return Data.Attrs.FirstOrDefault(x => x.Gid == gid && x.Sid == sid)?.Val ?? 0;
     }
 
     public void BuildPlayerAttr(bool additional = false)

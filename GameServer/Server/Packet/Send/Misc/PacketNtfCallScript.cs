@@ -126,6 +126,8 @@ public class PacketNtfCallScript : BasePacket
             sync.Custom[Player.ToPackedAttrKey(gid, sid)] = val;
             sync.Custom[Player.ToShiftedAttrKey(gid, sid)] = val;
         }
+        foreach (var (key, value) in Player.BuildMoneySync())
+            sync.Money[key] = value;
         proto.ExtraSync = sync;
 
         SetData(proto);

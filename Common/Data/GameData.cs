@@ -61,6 +61,7 @@ public static class GameData
     public static Dictionary<uint, DreamCardActivityExcel> DreamCardActivityData { get; private set; } = [];
     public static Dictionary<uint, DlcActivityExcel> DlcActivityData { get; private set; } = [];
     public static Dictionary<uint, BattlePassTimeExcel> BattlePassTimeData { get; private set; } = [];
+    public static Dictionary<uint, IbGoodsExcel> IbGoodsData { get; private set; } = [];
 }
 
 public static class GameResourceTemplateId

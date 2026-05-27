@@ -10,7 +10,16 @@ public class OtherItemExcel : ExcelResource
     public uint Detail { get; set; }
     public uint Particular { get; set; }
     public uint Level { get; set; }
+    public string LuaType { get; set; } = "";
+    [JsonProperty("UseMode")] public JToken? UseModeRaw { get; set; }
+    [JsonProperty("Param1")] public JToken? Param1Raw { get; set; }
     [JsonProperty("GMnum")] public JToken? GMnumRaw { get; set; }
+
+    [JsonIgnore]
+    public uint UseMode => ReadUInt(UseModeRaw);
+
+    [JsonIgnore]
+    public uint Param1 => ReadUInt(Param1Raw);
 
     [JsonIgnore]
     public uint GMnum => ReadUInt(GMnumRaw);
