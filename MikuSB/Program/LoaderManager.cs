@@ -179,7 +179,7 @@ public class LoaderManager : MikuSB
         }
     }
 
-    public static async Task InitCommand(CancellationToken exitToken)
+    public static async Task InitCommand(CancellationToken exitToken, string[]? startupArgs = null)
     {
         // Register the command handlers
         try
@@ -196,6 +196,9 @@ public class LoaderManager : MikuSB
         }
         IConsole.OnConsoleExcuteCommand += CommandExecutor.ConsoleExcuteCommand;
         CommandExecutor.OnRunCommand += (sender, e) => { CommandManager.HandleCommand(e, sender); };
+        if (startupArgs is not null &&
+            Array.Exists(startupArgs, static arg => string.Equals(arg, "-game", StringComparison.OrdinalIgnoreCase)))
+            CommandExecutor.ConsoleExcuteCommand("game");
 
         await IConsole.ListenConsole(exitToken);
     }

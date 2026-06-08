@@ -22,7 +22,7 @@ public class MikuSB
     private static readonly CancellationTokenSource _cts = new();
     private static int _exitCode = 0;
 
-    public static async Task Main()
+    public static async Task Main(string[] args)
     {
         var time = DateTime.Now;
         IConsole.InitConsole();
@@ -55,7 +55,7 @@ public class MikuSB
         ResourceManager.IsLoaded = true;
 
         HandbookGenerator.GenerateAll();
-        var consoleTask = Task.Run(() => LoaderManager.InitCommand(_cts.Token), _cts.Token);
+        var consoleTask = Task.Run(() => LoaderManager.InitCommand(_cts.Token, args), _cts.Token);
 
         var elapsed = DateTime.Now - time;
         Logger.Info(I18NManager.Translate("Server.ServerInfo.ServerStarted",

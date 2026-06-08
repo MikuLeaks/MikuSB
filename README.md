@@ -47,7 +47,7 @@ Request a refund immediately and report the seller to us on Discord with any rel
 dotnet build
 ```
 2. Set `GamePath` in `Config.json` to the path of your game executable.
-3. Start the server and run the `game` command.
+3. Start the server and run the `game` command (or start with `-game` to launch automatically).
 4. Create an account in the server console.  
 5. Enjoy.
 
