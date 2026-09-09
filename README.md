@@ -3,7 +3,7 @@
 <strong>MikuSB</strong> is a server emulator of a certain dungeon anime game.   
 `SdkServer`, `GameServer`, and an optional local HTTP/HTTPS proxy are started from a single `net9.0` application.  
 
-[Discord](https://discord.gg/fY5FHkzvjW)
+[Discord](https://discord.gg/6MvWY774hX)
 
 日本語のドキュメントは [README_jp.md](README_jp.md) にあります。
 

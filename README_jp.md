@@ -3,7 +3,7 @@
 <strong>MikuSB</strong>は、あるダンジョンアニメゲームのサーバーエミュレーターです。  
 `SdkServer`、`GameServer`、任意のローカル HTTP/HTTPS プロキシを 1 つの `net9.0` アプリとして起動します。  
 
-[Discord](https://discord.gg/fY5FHkzvjW)
+[Discord](https://discord.gg/6MvWY774hX)
 
 English documentation is available in [README.md](README.md).
 
